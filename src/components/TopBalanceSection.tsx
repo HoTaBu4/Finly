@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignSelf: 'flex-start',
+    marginBottom: 14,
   },
   statCard: {
     minWidth: 0,

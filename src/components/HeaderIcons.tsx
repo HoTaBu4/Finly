@@ -70,6 +70,6 @@ const styles = StyleSheet.create({
     right: -3,
     backgroundColor: colors.accentPrimary,
     borderWidth: 2,
-    borderColor: colors.panelBackground,
+    borderColor: colors.appBackground,
   },
 });
