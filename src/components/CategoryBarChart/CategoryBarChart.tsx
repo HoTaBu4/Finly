@@ -15,7 +15,7 @@ type CategoryBarChartProps = {
 };
 
 const MAX_VISIBLE_WITHOUT_SCROLL = 4;
-const CHART_HEIGHT = 170;
+const CHART_HEIGHT = 300;
 const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
 const BAR_GAP = 20;

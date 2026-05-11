@@ -1,11 +1,19 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
+import { HistoryByPeriod, HistoryTransaction } from '../components/HistoryByPeriod';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
 
+function toIsoDaysAgo(daysAgo: number) {
+  const date = new Date();
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString();
+}
+
 export function HomeScreen() {
+  //too: move this to aync request
   const chartItems = [
     {
       id: 'food',
@@ -34,7 +42,7 @@ export function HomeScreen() {
     },
     {
       id: 'other',
-      value: 11800,
+      value: 1100,
       icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
     },
     {
@@ -63,6 +71,86 @@ export function HomeScreen() {
       icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
     },
   ];
+  //too: move this to aync request
+  const historyItems: HistoryTransaction[] = [
+    {
+      id: '1',
+      amount: 620,
+      type: 'expense',
+      category: 'Food',
+      date: toIsoDaysAgo(1),
+    },
+    {
+      id: '2',
+      amount: 900,
+      type: 'expense',
+      category: 'Transport',
+      date: toIsoDaysAgo(1),
+    },
+    {
+      id: '33',
+      amount: 2500,
+      type: 'income',
+      category: 'Freelance',
+      date: toIsoDaysAgo(3),
+    },
+    {
+      id: '353',
+      amount: 2500,
+      type: 'expense',
+      category: 'Freelance',
+      date: toIsoDaysAgo(3),
+    },
+    {
+      id: '3',
+      amount: 2500,
+      type: 'income',
+      category: 'Freelance',
+      date: toIsoDaysAgo(10),
+    },
+    {
+      id: '4',
+      amount: 1200,
+      type: 'expense',
+      category: 'Shopping',
+      date: toIsoDaysAgo(12),
+    },
+    {
+      id: '5',
+      amount: 4000,
+      type: 'income',
+      category: 'Salary',
+      date: toIsoDaysAgo(20),
+    },
+    {
+      id: '6',
+      amount: 750,
+      type: 'expense',
+      category: 'Cafe',
+      date: toIsoDaysAgo(24),
+    },
+    {
+      id: '7',
+      amount: 1100,
+      type: 'expense',
+      category: 'Bills',
+      date: toIsoDaysAgo(30),
+    },
+    {
+      id: '8',
+      amount: 1100,
+      type: 'expense',
+      category: 'Bills',
+      date: toIsoDaysAgo(60),
+    },
+    {
+      id: '9',
+      amount: 1100,
+      type: 'expense',
+      category: 'Bills',
+      date: toIsoDaysAgo(90),
+    },
+  ];
 
   return (
     <View style={styles.screen}>
@@ -74,10 +162,11 @@ export function HomeScreen() {
         <View style={styles.chartSection}>
           <CategoryBarChart items={chartItems} />
         </View>
-
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>History Notes</Text>
-        </View>
+        <HistoryByPeriod
+          transactions={historyItems}
+          title="History"
+          transactionTypeFilter="expense"
+        />
       </ScrollView>
     </View>
   );
@@ -117,22 +206,5 @@ const styles = StyleSheet.create({
   inText: {
     fontSize: 11,
     color: colors.textSecondary,
-  },
-  notesSection: {
-    marginTop: 18,
-    paddingHorizontal: 18,
-    paddingBottom: 48,
-  },
-  notesTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    marginBottom: 10,
-  },
-  noteItem: {
-    fontSize: 14,
-    lineHeight: 21,
-    color: colors.textSecondary,
-    marginBottom: 8,
   },
 });
