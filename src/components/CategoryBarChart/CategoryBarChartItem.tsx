@@ -1,11 +1,12 @@
-import { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../theme/colors';
+import { CategoryChartIcon } from '../../types';
 
 type CategoryBarChartItemProps = {
   amountLabel: string;
   heightPercent: number;
-  icon: ReactNode;
+  iconName: CategoryChartIcon;
   isSelected?: boolean;
   isBlurred?: boolean;
   onPress?: () => void;
@@ -17,7 +18,7 @@ const BAR_TOP_HEADROOM = 12;
 export function CategoryBarChartItem({
   amountLabel,
   heightPercent,
-  icon,
+  iconName,
   isSelected = false,
   isBlurred = false,
   onPress,
@@ -42,7 +43,13 @@ export function CategoryBarChartItem({
           />
         </View>
         <View style={styles.metaRow}>
-          <View style={styles.iconWrap}>{icon}</View>
+          <View style={styles.iconWrap}>
+            <Ionicons
+              name={iconName}
+              size={20}
+              color={colors.textPrimary}
+            />
+          </View>
           <Text
             style={styles.amountText}
             numberOfLines={1}

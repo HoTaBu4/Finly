@@ -101,7 +101,7 @@ export function CategoryBarChart({
       <CategoryBarChartItem
         amountLabel={amountLabel}
         heightPercent={heightPercent}
-        icon={item.icon}
+        iconName={item.icon}
         isSelected={isSelected}
         isBlurred={isBlurred}
         onPress={createSelectHandler(item)}

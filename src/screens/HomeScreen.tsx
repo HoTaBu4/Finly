@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
 import { HistoryByPeriod } from '../components/HistoryByPeriod';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
-import { CategoryChartItem, HistoryTransaction } from '../types';
+import { CategoryChartIcon, CategoryChartItem, HistoryTransaction } from '../types';
 
 function toIsoDaysAgo(daysAgo: number) {
   const date = new Date();
@@ -24,42 +23,42 @@ export function HomeScreen() {
       category: 'Food',
       amount: 0,
       limit: 1500,
-      icon: <Ionicons name="restaurant" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.Restaurant,
     },
     {
       id: 'transport',
       category: 'Transport',
       amount: 2010,
       limit: null,
-      icon: <Ionicons name="car" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.Car,
     },
     {
       id: 'shopping',
       category: 'Shopping',
       amount: 3400,
       limit: 4000,
-      icon: <Ionicons name="bag-handle" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.BagHandle,
     },
     {
       id: 'health',
       category: 'Health',
       amount: 2400,
       limit: null,
-      icon: <Ionicons name="medkit" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.Medkit,
     },
     {
       id: 'bills',
       category: 'Bills',
       amount: 2600,
       limit: 3000,
-      icon: <Ionicons name="receipt" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.Receipt,
     },
     {
       id: 'other',
       category: 'Other',
       amount: 1100,
       limit: null,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
+      icon: CategoryChartIcon.EllipsisHorizontal,
     },
   ];
   //too: move this to aync request
