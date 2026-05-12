@@ -1,10 +1,12 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
-import { HistoryByPeriod, HistoryTransaction } from '../components/HistoryByPeriod';
+import { HistoryByPeriod } from '../components/HistoryByPeriod';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { colors } from '../theme/colors';
 import { spacing } from '../theme/spacing';
+import { CategoryChartItem, HistoryTransaction } from '../types';
 
 function toIsoDaysAgo(daysAgo: number) {
   const date = new Date();
@@ -13,61 +15,50 @@ function toIsoDaysAgo(daysAgo: number) {
 }
 
 export function HomeScreen() {
+  const [selectedCategory, setSelectedCategory] = useState<CategoryChartItem | null>(null);
+
   //too: move this to aync request
-  const chartItems = [
+  const chartItems: CategoryChartItem[] = [
     {
       id: 'food',
-      value: 999,
+      category: 'Food',
+      amount: 0,
+      limit: 1500,
       icon: <Ionicons name="restaurant" size={20} color={colors.textPrimary} />,
     },
     {
       id: 'transport',
-      value: 2010,
+      category: 'Transport',
+      amount: 2010,
+      limit: null,
       icon: <Ionicons name="car" size={20} color={colors.textPrimary} />,
     },
     {
       id: 'shopping',
-      value: 3400,
+      category: 'Shopping',
+      amount: 3400,
+      limit: 4000,
       icon: <Ionicons name="bag-handle" size={20} color={colors.textPrimary} />,
     },
     {
       id: 'health',
-      value: 2400,
+      category: 'Health',
+      amount: 2400,
+      limit: null,
       icon: <Ionicons name="medkit" size={20} color={colors.textPrimary} />,
     },
     {
       id: 'bills',
-      value: 2600,
+      category: 'Bills',
+      amount: 2600,
+      limit: 3000,
       icon: <Ionicons name="receipt" size={20} color={colors.textPrimary} />,
     },
     {
       id: 'other',
-      value: 1100,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
-    },
-    {
-      id: 'otheddr',
-      value: 1800,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
-    },
-    {
-      id: 'othasdasdaвer',
-      value: 1800,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
-    },
-    {
-      id: 'othasdaвer',
-      value: 1800,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
-    },
-    {
-      id: 'othasasddaвer',
-      value: 1800,
-      icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
-    },
-    {
-      id: 'othasaasdsddaвer',
-      value: 1800,
+      category: 'Other',
+      amount: 1100,
+      limit: null,
       icon: <Ionicons name="ellipsis-horizontal" size={20} color={colors.textPrimary} />,
     },
   ];
@@ -77,7 +68,7 @@ export function HomeScreen() {
       id: '1',
       amount: 620,
       type: 'expense',
-      category: 'Food',
+      category: 'Freelance',
       date: toIsoDaysAgo(1),
     },
     {
@@ -160,12 +151,29 @@ export function HomeScreen() {
       >
         <TopBalanceSection />
         <View style={styles.chartSection}>
-          <CategoryBarChart items={chartItems} />
+          <CategoryBarChart
+            items={chartItems}
+            onSelectionChange={setSelectedCategory}
+          />
         </View>
         <HistoryByPeriod
           transactions={historyItems}
           title="History"
           transactionTypeFilter="expense"
+          categoryFilter={selectedCategory?.category ?? null}
+          selectedCategory={selectedCategory}
+          onActionPress={
+            selectedCategory
+              ? () => {
+                  const actionLabel =
+                    selectedCategory.limit != null ? 'Edit limit' : 'Add limit';
+                  Alert.alert(
+                    'Limits',
+                    `${actionLabel} for ${selectedCategory.category}`
+                  );
+                }
+              : undefined
+          }
         />
       </ScrollView>
     </View>

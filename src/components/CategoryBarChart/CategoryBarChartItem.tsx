@@ -1,41 +1,71 @@
 import { ReactNode } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 
 type CategoryBarChartItemProps = {
   amountLabel: string;
   heightPercent: number;
   icon: ReactNode;
+  isSelected?: boolean;
+  isBlurred?: boolean;
+  onPress?: () => void;
 };
 
 const META_BLOCK_HEIGHT = 42;
+const BAR_TOP_HEADROOM = 12;
 
 export function CategoryBarChartItem({
   amountLabel,
   heightPercent,
   icon,
+  isSelected = false,
+  isBlurred = false,
+  onPress,
 }: CategoryBarChartItemProps) {
   return (
-    <View style={styles.column}>
-      <View style={styles.barArea}>
-        <View style={[styles.bar, { height: `${heightPercent}%` }]} />
+    <Pressable
+      style={({ pressed }) => [
+        styles.pressable,
+        pressed && styles.pressablePressed,
+      ]}
+      onPress={onPress}
+      disabled={!onPress}
+    >
+      <View style={styles.column}>
+        <View style={styles.barArea}>
+          <View
+            style={[
+              styles.bar,
+              { height: `${heightPercent}%` },
+              isSelected && styles.barSelected,
+            ]}
+          />
+        </View>
+        <View style={styles.metaRow}>
+          <View style={styles.iconWrap}>{icon}</View>
+          <Text
+            style={styles.amountText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.75}
+          >
+            {amountLabel}
+          </Text>
+        </View>
+        {isBlurred ? <View pointerEvents="none" style={styles.blurMask} /> : null}
       </View>
-      <View style={styles.metaRow}>
-        <View style={styles.iconWrap}>{icon}</View>
-        <Text
-          style={styles.amountText}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.75}
-        >
-          {amountLabel}
-        </Text>
-      </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressable: {
+    width: '100%',
+    height: '100%',
+  },
+  pressablePressed: {
+    opacity: 0.85,
+  },
   column: {
     width: '100%',
     height: '100%',
@@ -56,6 +86,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    paddingTop: BAR_TOP_HEADROOM,
   },
   iconWrap: {
     width: 22,
@@ -75,5 +106,13 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 6,
     backgroundColor: colors.accentPrimary,
+  },
+  barSelected: {
+    transform: [{ scale: 1.03 }],
+  },
+  blurMask: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(242, 242, 249, 0.45)',
+    borderRadius: 8,
   },
 });

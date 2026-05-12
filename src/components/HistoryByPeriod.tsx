@@ -1,17 +1,11 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
-
-export type TransactionType = 'income' | 'expense';
-export type HistoryTransactionFilter = TransactionType | 'all';
-
-export type HistoryTransaction = {
-  id: string;
-  amount: number;
-  type: TransactionType;
-  category: string;
-  date: string;
-};
+import {
+  CategoryChartItem,
+  HistoryTransaction,
+  HistoryTransactionFilter,
+} from '../types';
 
 type PeriodSection = {
   key: string;
@@ -25,6 +19,9 @@ type HistoryByPeriodProps = {
   transactions: HistoryTransaction[];
   title?: string;
   transactionTypeFilter?: HistoryTransactionFilter;
+  categoryFilter?: string | null;
+  selectedCategory?: CategoryChartItem | null;
+  onActionPress?: () => void;
 };
 
 function formatMoney(value: number) {
@@ -64,16 +61,36 @@ function formatMonthLabel(year: number, month: number) {
 
 export function HistoryByPeriod({
   transactions,
-  title = 'Expense History',
+  title = 'History',
   transactionTypeFilter = 'expense',
+  categoryFilter = null,
+  selectedCategory = null,
+  onActionPress,
 }: HistoryByPeriodProps) {
+  const historyTitle = selectedCategory
+    ? `History: ${selectedCategory.category}`
+    : title;
+  const historyActionLabel = selectedCategory
+    ? selectedCategory.limit != null
+      ? 'Edit limit'
+      : 'Add limit'
+    : undefined;
+
+  const normalizedCategoryFilter = categoryFilter?.trim().toLowerCase() ?? null;
+
   const sections = useMemo<PeriodSection[]>(() => {
     const filteredTransactions = transactions.filter((transaction) => {
-      if (transactionTypeFilter === 'all') {
+      const matchesType =
+        transactionTypeFilter === 'all' || transaction.type === transactionTypeFilter;
+      if (!matchesType) {
+        return false;
+      }
+
+      if (!normalizedCategoryFilter) {
         return true;
       }
 
-      return transaction.type === transactionTypeFilter;
+      return transaction.category.trim().toLowerCase() === normalizedCategoryFilter;
     });
 
     const monthlyGrouped = new Map<string, PeriodSection>();
@@ -113,13 +130,20 @@ export function HistoryByPeriod({
         }
         return (second.month ?? 0) - (first.month ?? 0);
       });
-  }, [transactionTypeFilter, transactions]);
+  }, [normalizedCategoryFilter, transactionTypeFilter, transactions]);
 
   const hasAnyTransactions = sections.some((section) => section.items.length > 0);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleRow}>
+        <Text style={styles.title}>{historyTitle}</Text>
+        {historyActionLabel && onActionPress ? (
+          <Pressable style={styles.limitButton} onPress={onActionPress}>
+            <Text style={styles.limitButtonText}>{historyActionLabel}</Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       {!hasAnyTransactions ? (
         <Text style={styles.emptyState}>No transactions found</Text>
@@ -168,6 +192,24 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: colors.textPrimary,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  limitButton: {
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.accentPrimary,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: colors.accentPrimarySoft,
+  },
+  limitButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.accentPrimary,
   },
   sectionCard: {
     borderRadius: 18,

@@ -1,17 +1,12 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { CategoryBarChartItem } from './CategoryBarChartItem';
 import { colors } from '../../theme/colors';
-
-type ChartItem = {
-  id: string;
-  value: number;
-  amount?: string;
-  icon: ReactNode;
-};
+import { CategoryChartItem } from '../../types';
 
 type CategoryBarChartProps = {
-  items: ChartItem[];
+  items: CategoryChartItem[];
+  onSelectionChange?: (selectedCategory: CategoryChartItem | null) => void;
 };
 
 const MAX_VISIBLE_WITHOUT_SCROLL = 4;
@@ -19,7 +14,7 @@ const CHART_HEIGHT = 300;
 const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
 const BAR_GAP = 20;
-const MIN_BAR_PERCENT = 16;
+const MIN_BAR_PERCENT = 5;
 const SCROLL_VISIBLE_EQUIVALENT_ITEMS = 4.5;
 const SCROLL_VISIBLE_GAP_COUNT = 4;
 const CONTENT_EDGE_PADDING = BAR_GAP;
@@ -36,9 +31,13 @@ function formatAmountFromValue(value: number) {
   return `${formatted} $`;
 }
 
-export function CategoryBarChart({ items }: CategoryBarChartProps) {
+export function CategoryBarChart({
+  items,
+  onSelectionChange,
+}: CategoryBarChartProps) {
   const [containerWidth, setContainerWidth] = useState(0);
-  const maxValue = Math.max(...items.map((item) => item.value), 1);
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const maxValue = Math.max(...items.map((item) => item.amount), 1);
   const needsScroll = items.length > MAX_VISIBLE_WITHOUT_SCROLL;
 
   const computedBarWidth =
@@ -79,13 +78,35 @@ export function CategoryBarChart({ items }: CategoryBarChartProps) {
     return offsets;
   }, [barWidth, itemSpan, maxOffset, middlePeekOffset, needsScroll]);
 
-  const renderBarItem = (item: ChartItem) => {
+  function createSelectHandler(item: CategoryChartItem) {
+    return () => {
+      setSelectedItemId((previous) => {
+        const nextId = previous === item.id ? null : item.id;
+        const nextItem = items.find((chartItem) => chartItem.id === nextId);
+        onSelectionChange?.(nextItem ?? null);
+        return nextId;
+      });
+    };
+  }
+
+  const renderBarItem = (item: CategoryChartItem) => {
     const heightPercent = Math.max(
       MIN_BAR_PERCENT,
-      Math.round((item.value / maxValue) * 100)
+      Math.round((item.amount / maxValue) * 100)
     );
-    const amountLabel = item.amount ?? formatAmountFromValue(item.value);
-    return <CategoryBarChartItem amountLabel={amountLabel} heightPercent={heightPercent} icon={item.icon} />;
+    const amountLabel = formatAmountFromValue(item.amount);
+    const isSelected = selectedItemId === item.id;
+    const isBlurred = selectedItemId !== null && !isSelected;
+    return (
+      <CategoryBarChartItem
+        amountLabel={amountLabel}
+        heightPercent={heightPercent}
+        icon={item.icon}
+        isSelected={isSelected}
+        isBlurred={isBlurred}
+        onPress={createSelectHandler(item)}
+      />
+    );
   };
 
   return (
@@ -111,6 +132,7 @@ export function CategoryBarChart({ items }: CategoryBarChartProps) {
         <FlatList
           horizontal
           data={items}
+          removeClippedSubviews={false}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({ item }) => (
             <View style={[styles.scrollBarWrap, { width: barWidth }]}>{renderBarItem(item)}</View>
