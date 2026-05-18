@@ -13,11 +13,11 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../../theme/colors';
-import { CategoryChartItem, HistoryTransaction, TransactionType } from '../../types';
+import { CategoryItem, HistoryTransaction, TransactionType } from '../../types';
 
 type EditTransactionModalProps = {
   transaction: HistoryTransaction;
-  categories: CategoryChartItem[];
+  categories: CategoryItem[];
   onClose: () => void;
   onSave: (transaction: HistoryTransaction) => void;
 };
@@ -36,7 +36,7 @@ export function EditTransactionModal({
     categories.find((item) => item.id === transaction.categoryId) ??
     null;
     
-  const [selectedCategory, setSelectedCategory] = useState<CategoryChartItem | null>(
+  const [selectedCategory, setSelectedCategory] = useState<CategoryItem | null>(
     initialSelectedCategory
   );
   const [amountInput, setAmountInput] = useState(String(Math.abs(transaction.amount)));
@@ -110,7 +110,7 @@ export function EditTransactionModal({
   const categorySections: Array<{
     type: TransactionType;
     title: string;
-    categories: CategoryChartItem[];
+    categories: CategoryItem[];
   }> = [
     { 
       type: 'income', 

@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { colors } from '../theme/colors';
 import {
-  CategoryChartItem,
+  CategoryItem,
   HistoryTransaction,
   HistoryTransactionFilter,
 } from '../types';
@@ -18,11 +18,11 @@ type PeriodSection = {
 
 type HistoryByPeriodProps = {
   transactions: HistoryTransaction[];
-  categories: CategoryChartItem[];
+  categories: CategoryItem[];
   title?: string;
   transactionTypeFilter?: HistoryTransactionFilter;
   categoryIdFilter?: string | null;
-  selectedCategory?: CategoryChartItem | null;
+  selectedCategory?: CategoryItem | null;
   onActionPress?: () => void;
   onTransactionEdit?: (transaction: HistoryTransaction) => void;
   onTransactionDelete?: (transaction: HistoryTransaction) => void;

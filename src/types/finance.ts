@@ -18,11 +18,14 @@ export enum CategoryChartIcon {
   EllipsisHorizontal = 'ellipsis-horizontal',
 }
 
-export type CategoryChartItem = {
+export type CategoryItem = {
   id: string;
   category: string;
   type: TransactionType;
   limit: number | null;
-  amount: number;
   icon: CategoryChartIcon;
+};
+
+export type CategoryChartItem = CategoryItem & {
+  amount: number;
 };

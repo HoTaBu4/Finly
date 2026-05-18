@@ -1,11 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
-import { CategoryChartItem, HistoryTransaction } from '../../types';
+import { CategoryItem, HistoryTransaction } from '../../types';
 
 type DeleteTransactionModalProps = {
   transaction: HistoryTransaction | null;
-  categories: CategoryChartItem[];
+  categories: CategoryItem[];
   onClose: () => void;
   onConfirm: (transaction: HistoryTransaction) => void;
 };

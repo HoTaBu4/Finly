@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
 import { HistoryByPeriod } from '../components/HistoryByPeriod';
@@ -8,7 +8,12 @@ import { LimitModal } from '../components/modals/LimitModal';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { colors } from '../theme/colors';
-import { CategoryChartIcon, CategoryChartItem, HistoryTransaction } from '../types';
+import {
+  CategoryChartIcon,
+  CategoryChartItem,
+  CategoryItem,
+  HistoryTransaction,
+} from '../types';
 
 function toIsoDaysAgo(daysAgo: number) {
   const date = new Date();
@@ -16,12 +21,11 @@ function toIsoDaysAgo(daysAgo: number) {
   return date.toISOString();
 }
 
-const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
+const INITIAL_CATEGORIES: CategoryItem[] = [
   {
     id: '1',
     category: 'Food',
     type: 'expense',
-    amount: 0,
     limit: 1500,
     icon: CategoryChartIcon.Restaurant,
   },
@@ -29,7 +33,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '2',
     category: 'Transport',
     type: 'expense',
-    amount: 2010,
     limit: null,
     icon: CategoryChartIcon.Car,
   },
@@ -37,7 +40,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '3',
     category: 'Shopping',
     type: 'expense',
-    amount: 3400,
     limit: 4000,
     icon: CategoryChartIcon.BagHandle,
   },
@@ -45,7 +47,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '4',
     category: 'Health',
     type: 'expense',
-    amount: 2400,
     limit: null,
     icon: CategoryChartIcon.Medkit,
   },
@@ -53,7 +54,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '5',
     category: 'Bills',
     type: 'expense',
-    amount: 2600,
     limit: 3000,
     icon: CategoryChartIcon.Receipt,
   },
@@ -61,7 +61,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '6',
     category: 'Other',
     type: 'expense',
-    amount: 1100,
     limit: null,
     icon: CategoryChartIcon.EllipsisHorizontal,
   },
@@ -69,7 +68,6 @@ const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
     id: '7',
     category: 'Salary',
     type: 'income',
-    amount: 0,
     limit: null,
     icon: CategoryChartIcon.Receipt,
   },
@@ -156,15 +154,34 @@ const HISTORY_ITEMS: HistoryTransaction[] = [
 ];
 
 export function HomeScreen() {
-  const [chartItems, setChartItems] = useState<CategoryChartItem[]>(INITIAL_CHART_ITEMS);
+  const [categories, setCategories] = useState<CategoryItem[]>(INITIAL_CATEGORIES);
   const [historyItems, setHistoryItems] = useState<HistoryTransaction[]>(HISTORY_ITEMS);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
+  const chartItems = useMemo<CategoryChartItem[]>(
+    () =>
+      categories.map((category) => {
+        const amount = historyItems.reduce((sum, transaction) => {
+          const isSameCategory = transaction.categoryId === category.id;
+          const isSameType = transaction.type === category.type;
+          return isSameCategory && isSameType
+            ? sum + Math.abs(transaction.amount)
+            : sum;
+        }, 0);
+
+        return {
+          ...category,
+          amount,
+        };
+      }),
+    [categories, historyItems]
+  );
+
   const selectedCategory =
-    chartItems.find((item) => item.id === selectedCategoryId) ?? null;
+    categories.find((item) => item.id === selectedCategoryId) ?? null;
 
   function handleSelectionChange(category: CategoryChartItem | null) {
     setSelectedCategoryId(category?.id ?? null);
@@ -179,7 +196,7 @@ export function HomeScreen() {
       return;
     }
 
-    setChartItems((previous) =>
+    setCategories((previous) =>
       previous.map((item) =>
         item.id === selectedCategory.id
           ? { ...item, limit }
@@ -238,7 +255,7 @@ export function HomeScreen() {
         </View>
         <HistoryByPeriod
           transactions={historyItems}
-          categories={chartItems}
+          categories={categories}
           title="History"
           transactionTypeFilter="expense"
           categoryIdFilter={selectedCategory?.id ?? null}
@@ -258,7 +275,7 @@ export function HomeScreen() {
       {transactionToEdit && (
         <EditTransactionModal
           transaction={transactionToEdit}
-          categories={chartItems}
+          categories={categories}
           onClose={closeEditTransactionModal}
           onSave={saveEditedTransaction}
         />
@@ -266,7 +283,7 @@ export function HomeScreen() {
       {transactionToDelete && (
         <DeleteTransactionModal
           transaction={transactionToDelete}
-          categories={chartItems}
+          categories={categories}
           onClose={closeDeleteTransactionModal}
           onConfirm={confirmDeleteTransaction}
         />
