@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
 import { HistoryByPeriod } from '../components/HistoryByPeriod';
+import { DeleteTransactionModal } from '../components/modals/DeleteTransactionModal';
+import { EditTransactionModal } from '../components/modals/EditTransactionModal';
 import { LimitModal } from '../components/modals/LimitModal';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
@@ -16,46 +18,60 @@ function toIsoDaysAgo(daysAgo: number) {
 
 const INITIAL_CHART_ITEMS: CategoryChartItem[] = [
   {
-    id: 'food',
+    id: '1',
     category: 'Food',
+    type: 'expense',
     amount: 0,
     limit: 1500,
     icon: CategoryChartIcon.Restaurant,
   },
   {
-    id: 'transport',
+    id: '2',
     category: 'Transport',
+    type: 'expense',
     amount: 2010,
     limit: null,
     icon: CategoryChartIcon.Car,
   },
   {
-    id: 'shopping',
+    id: '3',
     category: 'Shopping',
+    type: 'expense',
     amount: 3400,
     limit: 4000,
     icon: CategoryChartIcon.BagHandle,
   },
   {
-    id: 'health',
+    id: '4',
     category: 'Health',
+    type: 'expense',
     amount: 2400,
     limit: null,
     icon: CategoryChartIcon.Medkit,
   },
   {
-    id: 'bills',
+    id: '5',
     category: 'Bills',
+    type: 'expense',
     amount: 2600,
     limit: 3000,
     icon: CategoryChartIcon.Receipt,
   },
   {
-    id: 'other',
+    id: '6',
     category: 'Other',
+    type: 'expense',
     amount: 1100,
     limit: null,
     icon: CategoryChartIcon.EllipsisHorizontal,
+  },
+  {
+    id: '7',
+    category: 'Salary',
+    type: 'income',
+    amount: 0,
+    limit: null,
+    icon: CategoryChartIcon.Receipt,
   },
 ];
 
@@ -64,85 +80,88 @@ const HISTORY_ITEMS: HistoryTransaction[] = [
     id: '1',
     amount: 620,
     type: 'expense',
-    category: 'Freelance',
+    categoryId: '6',
     date: toIsoDaysAgo(1),
   },
   {
     id: '2',
     amount: 900,
     type: 'expense',
-    category: 'Transport',
+    categoryId: '2',
     date: toIsoDaysAgo(1),
   },
   {
     id: '33',
     amount: 2500,
     type: 'income',
-    category: 'Freelance',
+    categoryId: '7',
     date: toIsoDaysAgo(3),
   },
   {
     id: '353',
     amount: 2500,
     type: 'expense',
-    category: 'Freelance',
+    categoryId: '6',
     date: toIsoDaysAgo(3),
   },
   {
     id: '3',
     amount: 2500,
     type: 'income',
-    category: 'Freelance',
+    categoryId: '7',
     date: toIsoDaysAgo(10),
   },
   {
     id: '4',
     amount: 1200,
     type: 'expense',
-    category: 'Shopping',
+    categoryId: '3',
     date: toIsoDaysAgo(12),
   },
   {
     id: '5',
     amount: 4000,
     type: 'income',
-    category: 'Salary',
+    categoryId: '7',
     date: toIsoDaysAgo(20),
   },
   {
     id: '6',
     amount: 750,
     type: 'expense',
-    category: 'Cafe',
+    categoryId: '6',
     date: toIsoDaysAgo(24),
   },
   {
     id: '7',
     amount: 1100,
     type: 'expense',
-    category: 'Bills',
+    categoryId: '5',
     date: toIsoDaysAgo(30),
   },
   {
     id: '8',
     amount: 1100,
     type: 'expense',
-    category: 'Bills',
+    categoryId: '5',
     date: toIsoDaysAgo(60),
   },
   {
     id: '9',
     amount: 1100,
     type: 'expense',
-    category: 'Bills',
+    categoryId: '5',
     date: toIsoDaysAgo(90),
   },
 ];
 
 export function HomeScreen() {
   const [chartItems, setChartItems] = useState<CategoryChartItem[]>(INITIAL_CHART_ITEMS);
+  const [historyItems, setHistoryItems] = useState<HistoryTransaction[]>(HISTORY_ITEMS);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
+  const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
   const selectedCategory =
     chartItems.find((item) => item.id === selectedCategoryId) ?? null;
@@ -170,6 +189,40 @@ export function HomeScreen() {
     setLimitModalVisibility(false);
   }
 
+  function handleEditTransaction(transaction: HistoryTransaction) {
+    setTransactionToEdit(transaction);
+  }
+
+  function handleDeleteTransaction(transaction: HistoryTransaction) {
+    setTransactionToDelete(transaction);
+  }
+
+  function closeEditTransactionModal() {
+    setTransactionToEdit(null);
+  }
+
+  function closeDeleteTransactionModal() {
+    setTransactionToDelete(null);
+  }
+
+  function saveEditedTransaction(updatedTransaction: HistoryTransaction) {
+    setHistoryItems((previous) =>
+      previous.map((item) =>
+        item.id === updatedTransaction.id
+          ? updatedTransaction
+          : item
+      )
+    );
+    closeEditTransactionModal();
+  }
+
+  function confirmDeleteTransaction(transaction: HistoryTransaction) {
+    setHistoryItems((previous) =>
+      previous.filter((item) => item.id !== transaction.id)
+    );
+    closeDeleteTransactionModal();
+  }
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -184,12 +237,15 @@ export function HomeScreen() {
           />
         </View>
         <HistoryByPeriod
-          transactions={HISTORY_ITEMS}
+          transactions={historyItems}
+          categories={chartItems}
           title="History"
           transactionTypeFilter="expense"
-          categoryFilter={selectedCategory?.category ?? null}
+          categoryIdFilter={selectedCategory?.id ?? null}
           selectedCategory={selectedCategory}
           onActionPress={() => setLimitModalVisibility(true)}
+          onTransactionEdit={handleEditTransaction}
+          onTransactionDelete={handleDeleteTransaction}
         />
       </ScrollView>
       <LimitModal
@@ -199,6 +255,22 @@ export function HomeScreen() {
         onClose={() => setLimitModalVisibility(false)}
         onSave={saveLimit}
       />
+      {transactionToEdit && (
+        <EditTransactionModal
+          transaction={transactionToEdit}
+          categories={chartItems}
+          onClose={closeEditTransactionModal}
+          onSave={saveEditedTransaction}
+        />
+      )}
+      {transactionToDelete && (
+        <DeleteTransactionModal
+          transaction={transactionToDelete}
+          categories={chartItems}
+          onClose={closeDeleteTransactionModal}
+          onConfirm={confirmDeleteTransaction}
+        />
+      )}
       <StickyAddBar
         onAddPress={() => Alert.alert('Add item', 'Open add item form')}
         onMicPress={() => Alert.alert('Voice input', 'Start voice capture')}
@@ -219,27 +291,5 @@ const styles = StyleSheet.create({
   chartSection: {
     paddingHorizontal: 18,
     paddingTop: 8,
-  },
-  filtersRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 10,
-  },
-  filterChip: {
-    height: 24,
-    paddingHorizontal: 10,
-    borderRadius: 7,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-  },
-  filterChipText: {
-    fontSize: 10,
-    color: colors.textSecondary,
-    fontWeight: '500',
-  },
-  inText: {
-    fontSize: 11,
-    color: colors.textSecondary,
   },
 });

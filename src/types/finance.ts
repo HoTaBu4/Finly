@@ -5,7 +5,7 @@ export type HistoryTransaction = {
   id: string;
   amount: number;
   type: TransactionType;
-  category: string;
+  categoryId: string;
   date: string;
 };
 
@@ -21,6 +21,7 @@ export enum CategoryChartIcon {
 export type CategoryChartItem = {
   id: string;
   category: string;
+  type: TransactionType;
   limit: number | null;
   amount: number;
   icon: CategoryChartIcon;
