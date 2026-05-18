@@ -120,6 +120,12 @@ export function HistoryByPeriod({
   const openRowKeyRef = useRef<string | null>(null);
   const closeOpenRowRef = useRef<(() => void) | null>(null);
 
+  function closeOpenedRow() {
+    closeOpenRowRef.current?.();
+    openRowKeyRef.current = null;
+    closeOpenRowRef.current = null;
+  }
+
   function handleRowOpen(rowKey: string, closeRow: () => void) {
     if (openRowKeyRef.current && openRowKeyRef.current !== rowKey) {
       closeOpenRowRef.current?.();
@@ -139,7 +145,7 @@ export function HistoryByPeriod({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onTouchStart={closeOpenedRow}>
       <View style={styles.titleRow}>
         <Text style={styles.title}>{historyTitle}</Text>
         {historyActionLabel && onActionPress ? (
