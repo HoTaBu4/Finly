@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
-import { HistoryByPeriod } from '../components/HistoryByPeriod';
+import { HistoryByPeriod } from '../components/HistoryByPeriod/HistoryByPeriodRow';
 import { DeleteTransactionModal } from '../components/modals/DeleteTransactionModal';
 import { EditTransactionModal } from '../components/modals/EditTransactionModal';
 import { LimitModal } from '../components/modals/LimitModal';
