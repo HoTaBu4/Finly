@@ -9,21 +9,40 @@ export type HistoryTransaction = {
   date: string;
 };
 
-export enum CategoryChartIcon {
+
+export enum CategoryIconKey {
+  Food = 'food',
+  Groceries = 'groceries',
+  Cafe = 'cafe',
   Restaurant = 'restaurant',
-  Car = 'car',
-  BagHandle = 'bag-handle',
-  Medkit = 'medkit',
-  Receipt = 'receipt',
-  EllipsisHorizontal = 'ellipsis-horizontal',
+  Transport = 'transport',
+  Taxi = 'taxi',
+  Fuel = 'fuel',
+  Gas = 'gas',
+  Shopping = 'shopping',
+  Clothes = 'clothes',
+  Market = 'market',
+  Health = 'health',
+  Medicine = 'medicine',
+  Pharmacy = 'pharmacy',
+  Doctor = 'doctor',
+  Bills = 'bills',
+  Utilities = 'utilities',
+  Rent = 'rent',
+  Internet = 'internet',
+  Salary = 'salary',
+  Freelance = 'freelance',
+  Income = 'income',
+  Other = 'other',
 }
+
 
 export type CategoryItem = {
   id: string;
   category: string;
   type: TransactionType;
   limit: number | null;
-  icon: CategoryChartIcon;
+  icon: CategoryIconKey;
 };
 
 export type CategoryChartItem = CategoryItem & {
