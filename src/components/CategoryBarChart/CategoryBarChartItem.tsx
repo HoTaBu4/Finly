@@ -1,12 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../theme/colors';
-import { CategoryChartIcon } from '../../types';
+import { CategoryIconKey } from '../../types';
 
 type CategoryBarChartItemProps = {
   amountLabel: string;
   heightPercent: number;
-  iconName: CategoryChartIcon;
+  iconName: CategoryIconKey;
   isSelected?: boolean;
   isBlurred?: boolean;
   onPress?: () => void;
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   },
   blurMask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(242, 242, 249, 0.45)',
+    backgroundColor: colors.chartBlurMask,
     borderRadius: 8,
   },
 });

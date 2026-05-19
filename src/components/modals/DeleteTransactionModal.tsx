@@ -83,7 +83,7 @@ export function DeleteTransactionModal({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(17, 17, 28, 0.35)',
+    backgroundColor: colors.modalOverlay,
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff0e9',
+    backgroundColor: colors.warningSoft,
   },
   headerTextWrap: {
     flex: 1,

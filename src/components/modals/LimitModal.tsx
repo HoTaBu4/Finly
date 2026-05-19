@@ -95,7 +95,7 @@ export function LimitModal({
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(17, 17, 28, 0.35)',
+    backgroundColor: colors.modalOverlay,
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
@@ -115,9 +115,9 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   modalInput: {
-    borderWidth: 1,
-    borderColor: colors.panelBorder,
-    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.borderInput,
+    borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,

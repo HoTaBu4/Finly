@@ -1,5 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Modal,
@@ -11,25 +10,38 @@ import {
 } from 'react-native';
 import { CategorySelectDropdown } from '../CategorySelectDropdown';
 import { colors } from '../../theme/colors';
-import { CategoryItem, HistoryTransaction } from '../../types';
+import { CategoryItem, TransactionType } from '../../types';
 
-type EditTransactionModalProps = {
-  transaction: HistoryTransaction;
-  categories: CategoryItem[];
-  onClose: () => void;
-  onSave: (transaction: HistoryTransaction) => void;
+export type AddTransactionInput = {
+  amount: number;
+  categoryId: string;
+  type: TransactionType;
 };
 
-export function EditTransactionModal({
-  transaction,
+type AddTransactionModalProps = {
+  visible: boolean;
+  categories: CategoryItem[];
+  onClose: () => void;
+  onSave: (transaction: AddTransactionInput) => void;
+};
+
+export function AddTransactionModal({
+  visible,
   categories,
   onClose,
   onSave,
-}: EditTransactionModalProps) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    transaction.categoryId
-  );
-  const [amountInput, setAmountInput] = useState(String(Math.abs(transaction.amount)));
+}: AddTransactionModalProps) {
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [amountInput, setAmountInput] = useState('');
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
+    setAmountInput('');
+    setSelectedCategoryId(categories[0]?.id ?? null);
+  }, [categories, visible]);
 
   const categoryById = useMemo(
     () => new Map(categories.map((item) => [item.id, item])),
@@ -38,11 +50,10 @@ export function EditTransactionModal({
   const selectedCategory = selectedCategoryId
     ? categoryById.get(selectedCategoryId) ?? null
     : null;
-  const selectedType = selectedCategory?.type ?? transaction.type;
 
   function handleSave() {
     if (!selectedCategory) {
-      Alert.alert('Invalid category', 'Please select a category.');
+      Alert.alert('No category', 'Please choose a category.');
       return;
     }
 
@@ -53,16 +64,15 @@ export function EditTransactionModal({
     }
 
     onSave({
-      ...transaction,
-      type: selectedType,
-      categoryId: selectedCategory.id,
       amount: Math.abs(parsedAmount),
+      categoryId: selectedCategory.id,
+      type: selectedCategory.type,
     });
   }
 
   return (
     <Modal
-      visible
+      visible={visible}
       transparent
       animationType="fade"
       onRequestClose={onClose}
@@ -72,23 +82,17 @@ export function EditTransactionModal({
           style={styles.modalCard}
           onPress={(event) => event.stopPropagation()}
         >
-          <View style={styles.headerRow}>
-            <View style={styles.iconWrap}>
-              <Ionicons name="create-outline" size={16} color={colors.accentPrimary} />
-            </View>
-            <View style={styles.headerTextWrap}>
-              <Text style={styles.modalTitle}>Edit transaction</Text>
-              <Text style={styles.modalSubtitle}>
-                {selectedType === 'expense' ? 'Expense' : 'Income'}
-              </Text>
-            </View>
-          </View>
+          <Text style={styles.modalTitle}>Add transaction</Text>
+          <Text style={styles.modalSubtitle}>
+            {selectedCategory?.type === 'income' ? 'Income' : 'Expense'}
+          </Text>
 
           <Text style={styles.fieldLabel}>Category</Text>
           <CategorySelectDropdown
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onCategoryChange={(category) => setSelectedCategoryId(category.id)}
+            visible={visible}
           />
 
           <Text style={styles.fieldLabel}>Amount</Text>
@@ -99,6 +103,7 @@ export function EditTransactionModal({
             placeholder="Amount"
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
+            autoFocus
           />
 
           <View style={styles.modalActions}>
@@ -106,7 +111,7 @@ export function EditTransactionModal({
               <Text style={styles.modalCancelText}>Cancel</Text>
             </Pressable>
             <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>Save</Text>
+              <Text style={styles.modalSaveText}>Add</Text>
             </Pressable>
           </View>
         </Pressable>
@@ -125,28 +130,10 @@ const styles = StyleSheet.create({
   modalCard: {
     borderRadius: 20,
     backgroundColor: colors.cardBackground,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.panelBorder,
     padding: 18,
     gap: 10,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginBottom: 4,
-  },
-  iconWrap: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.accentPrimarySoft,
-  },
-  headerTextWrap: {
-    flex: 1,
-    gap: 2,
   },
   modalTitle: {
     fontSize: 20,
@@ -182,8 +169,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.panelBorder,
+    borderWidth: 1.5,
+    borderColor: colors.borderInput,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.cardBackground,

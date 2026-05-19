@@ -5,11 +5,12 @@ import { HistoryByPeriod } from '../components/HistoryByPeriod/HistoryByPeriodRo
 import { DeleteTransactionModal } from '../components/modals/DeleteTransactionModal';
 import { EditTransactionModal } from '../components/modals/EditTransactionModal';
 import { LimitModal } from '../components/modals/LimitModal';
+import { AddTransactionInput, AddTransactionModal } from '../components/modals/addTransactionModal';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { colors } from '../theme/colors';
 import {
-  CategoryChartIcon,
+  CategoryIconKey,
   CategoryChartItem,
   CategoryItem,
   HistoryTransaction,
@@ -27,49 +28,49 @@ const INITIAL_CATEGORIES: CategoryItem[] = [
     category: 'Food',
     type: 'expense',
     limit: 1500,
-    icon: CategoryChartIcon.Restaurant,
+    icon: CategoryIconKey.Restaurant,
   },
   {
     id: '2',
     category: 'Transport',
     type: 'expense',
     limit: null,
-    icon: CategoryChartIcon.Car,
+    icon: CategoryIconKey.Car,
   },
   {
     id: '3',
     category: 'Shopping',
     type: 'expense',
     limit: 4000,
-    icon: CategoryChartIcon.BagHandle,
+    icon: CategoryIconKey.BagHandle,
   },
   {
     id: '4',
     category: 'Health',
     type: 'expense',
     limit: null,
-    icon: CategoryChartIcon.Medkit,
+    icon: CategoryIconKey.Medkit,
   },
   {
     id: '5',
     category: 'Bills',
     type: 'expense',
     limit: 3000,
-    icon: CategoryChartIcon.Receipt,
+    icon: CategoryIconKey.Receipt,
   },
   {
     id: '6',
     category: 'Other',
     type: 'expense',
     limit: null,
-    icon: CategoryChartIcon.EllipsisHorizontal,
+    icon: CategoryIconKey.EllipsisHorizontal,
   },
   {
     id: '7',
     category: 'Salary',
     type: 'income',
     limit: null,
-    icon: CategoryChartIcon.Receipt,
+    icon: CategoryIconKey.Receipt,
   },
 ];
 
@@ -158,6 +159,7 @@ export function HomeScreen() {
   const [historyItems, setHistoryItems] = useState<HistoryTransaction[]>(HISTORY_ITEMS);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
+  const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
@@ -222,6 +224,24 @@ export function HomeScreen() {
     setTransactionToDelete(null);
   }
 
+  function closeAddTransactionModal() {
+    setAddTransactionModalOpen(false);
+  }
+
+  function saveAddedTransaction(newTransaction: AddTransactionInput) {
+    setHistoryItems((previous) => [
+      {
+        id: `${Date.now()}`,
+        amount: Math.abs(newTransaction.amount),
+        type: newTransaction.type,
+        categoryId: newTransaction.categoryId,
+        date: new Date().toISOString(),
+      },
+      ...previous,
+    ]);
+    closeAddTransactionModal();
+  }
+
   function saveEditedTransaction(updatedTransaction: HistoryTransaction) {
     setHistoryItems((previous) =>
       previous.map((item) =>
@@ -272,6 +292,12 @@ export function HomeScreen() {
         onClose={() => setLimitModalVisibility(false)}
         onSave={saveLimit}
       />
+      <AddTransactionModal
+        visible={isAddTransactionModalOpen}
+        categories={categories}
+        onClose={closeAddTransactionModal}
+        onSave={saveAddedTransaction}
+      />
       {transactionToEdit && (
         <EditTransactionModal
           transaction={transactionToEdit}
@@ -289,7 +315,7 @@ export function HomeScreen() {
         />
       )}
       <StickyAddBar
-        onAddPress={() => Alert.alert('Add item', 'Open add item form')}
+        onAddPress={() => setAddTransactionModalOpen(true)}
         onMicPress={() => Alert.alert('Voice input', 'Start voice capture')}
       />
     </View>
