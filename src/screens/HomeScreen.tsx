@@ -249,22 +249,20 @@ export function HomeScreen() {
         onManageCategoriesPress={openManageCategories}
         onAccountPress={openAccountSettings}
       />
-      {transactionToEdit && (
-        <EditTransactionModal
-          transaction={transactionToEdit}
-          categories={categories}
-          onClose={closeEditTransactionModal}
-          onSave={saveEditedTransaction}
-        />
-      )}
-      {transactionToDelete && (
-        <DeleteTransactionModal
-          transaction={transactionToDelete}
-          categories={categories}
-          onClose={closeDeleteTransactionModal}
-          onConfirm={confirmDeleteTransaction}
-        />
-      )}
+      <EditTransactionModal
+        visible={Boolean(transactionToEdit)}
+        transaction={transactionToEdit}
+        categories={categories}
+        onClose={closeEditTransactionModal}
+        onSave={saveEditedTransaction}
+      />
+      <DeleteTransactionModal
+        visible={Boolean(transactionToDelete)}
+        transaction={transactionToDelete}
+        categories={categories}
+        onClose={closeDeleteTransactionModal}
+        onConfirm={confirmDeleteTransaction}
+      />
       <StickyAddBar
         onAddPress={() => setAddTransactionModalOpen(true)}
         onMicPress={() => Alert.alert('Voice input', 'Start voice capture')}

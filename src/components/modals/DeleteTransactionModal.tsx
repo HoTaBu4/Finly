@@ -4,6 +4,7 @@ import { colors } from '../../theme/colors';
 import { CategoryItem, HistoryTransaction } from '../../types';
 
 type DeleteTransactionModalProps = {
+  visible: boolean;
   transaction: HistoryTransaction | null;
   categories: CategoryItem[];
   onClose: () => void;
@@ -18,6 +19,7 @@ function formatAmount(amount: number) {
 }
 
 export function DeleteTransactionModal({
+  visible,
   transaction,
   categories,
   onClose,
@@ -37,7 +39,7 @@ export function DeleteTransactionModal({
 
   return (
     <Modal
-      visible
+      visible={visible}
       transparent
       animationType="fade"
       onRequestClose={onClose}

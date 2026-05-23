@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Modal,
@@ -11,25 +11,35 @@ import {
 } from 'react-native';
 import { CategorySelectDropdown } from '../CategorySelectDropdown';
 import { colors } from '../../theme/colors';
-import { CategoryItem, HistoryTransaction } from '../../types';
+import { CategoryItem, HistoryTransaction, TransactionType } from '../../types';
 
 type EditTransactionModalProps = {
-  transaction: HistoryTransaction;
+  visible: boolean;
+  transaction: HistoryTransaction | null;
   categories: CategoryItem[];
   onClose: () => void;
   onSave: (transaction: HistoryTransaction) => void;
 };
 
 export function EditTransactionModal({
+  visible,
   transaction,
   categories,
   onClose,
   onSave,
 }: EditTransactionModalProps) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-    transaction.categoryId
-  );
-  const [amountInput, setAmountInput] = useState(String(Math.abs(transaction.amount)));
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [amountInput, setAmountInput] = useState('');
+
+  useEffect(() => {
+
+    if (!transaction) {
+      return;
+    }
+
+    setSelectedCategoryId(transaction.categoryId);
+    setAmountInput(String(Math.abs(transaction.amount)));
+  }, [transaction, visible]);
 
   const categoryById = useMemo(
     () => new Map(categories.map((item) => [item.id, item])),
@@ -38,9 +48,13 @@ export function EditTransactionModal({
   const selectedCategory = selectedCategoryId
     ? categoryById.get(selectedCategoryId) ?? null
     : null;
-  const selectedType = selectedCategory?.type ?? transaction.type;
+  const selectedType: TransactionType = selectedCategory?.type ?? 'expense';
 
   function handleSave() {
+    if (!transaction) {
+      return;
+    }
+
     if (!selectedCategory) {
       Alert.alert('Invalid category', 'Please select a category.');
       return;
@@ -60,9 +74,13 @@ export function EditTransactionModal({
     });
   }
 
+  if (!transaction) {
+    return null;
+  }
+
   return (
     <Modal
-      visible
+      visible={visible}
       transparent
       animationType="fade"
       onRequestClose={onClose}
