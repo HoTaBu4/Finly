@@ -1,5 +1,15 @@
 export type TransactionType = 'income' | 'expense';
-export type HistoryTransactionFilter = TransactionType | 'all';
+
+export enum HistoryTransactionFilter {
+  Expense = 'expense',
+  Income = 'income',
+  All = 'all',
+}
+
+export enum TrackingMode {
+  ExpensesOnly = 'expenses_only',
+  Both = 'both',
+}
 
 export type HistoryTransaction = {
   id: string;

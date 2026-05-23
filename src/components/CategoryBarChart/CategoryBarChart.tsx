@@ -6,10 +6,11 @@ import { CategoryChartItem } from '../../types';
 
 type CategoryBarChartProps = {
   items: CategoryChartItem[];
+  selectedItemId?: string | null;
   onSelectionChange?: (selectedCategory: CategoryChartItem | null) => void;
 };
 
-const MAX_VISIBLE_WITHOUT_SCROLL = 4;
+const MAX_VISIBLE_WITHOUT_SCROLL = 5;
 const CHART_HEIGHT = 300;
 const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
@@ -33,10 +34,10 @@ function formatAmountFromValue(value: number) {
 
 export function CategoryBarChart({
   items,
+  selectedItemId = null,
   onSelectionChange,
 }: CategoryBarChartProps) {
   const [containerWidth, setContainerWidth] = useState(0);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const maxValue = Math.max(...items.map((item) => item.amount), 1);
   const needsScroll = items.length > MAX_VISIBLE_WITHOUT_SCROLL;
 
@@ -80,12 +81,9 @@ export function CategoryBarChart({
 
   function createSelectHandler(item: CategoryChartItem) {
     return () => {
-      setSelectedItemId((previous) => {
-        const nextId = previous === item.id ? null : item.id;
-        const nextItem = items.find((chartItem) => chartItem.id === nextId);
-        onSelectionChange?.(nextItem ?? null);
-        return nextId;
-      });
+      const nextId = selectedItemId === item.id ? null : item.id;
+      const nextItem = items.find((chartItem) => chartItem.id === nextId);
+      onSelectionChange?.(nextItem ?? null);
     };
   }
 

@@ -46,7 +46,7 @@ export function HistoryByPeriod({
   transactions,
   categories,
   title = 'History',
-  transactionTypeFilter = 'expense',
+  transactionTypeFilter = HistoryTransactionFilter.Expense,
   categoryIdFilter = null,
   selectedCategory = null,
   onActionPress,
@@ -71,7 +71,8 @@ export function HistoryByPeriod({
   const sections = useMemo<PeriodSection[]>(() => {
     const filteredTransactions = transactions.filter((transaction) => {
       const matchesType =
-        transactionTypeFilter === 'all' || transaction.type === transactionTypeFilter;
+        transactionTypeFilter === HistoryTransactionFilter.All ||
+        transaction.type === transactionTypeFilter;
       const matchesCategory =
         !normalizedCategoryIdFilter || transaction.categoryId === normalizedCategoryIdFilter;
       return matchesType && matchesCategory;

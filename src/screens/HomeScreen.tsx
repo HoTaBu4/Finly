@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
 import { HistoryByPeriod } from '../components/HistoryByPeriod/HistoryByPeriodRow';
@@ -6,153 +6,18 @@ import { DeleteTransactionModal } from '../components/modals/DeleteTransactionMo
 import { EditTransactionModal } from '../components/modals/EditTransactionModal';
 import { LimitModal } from '../components/modals/LimitModal';
 import { AddTransactionInput, AddTransactionModal } from '../components/modals/addTransactionModal';
+import { SettingsMenuSheet } from '../components/SettingsMenuSheet';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
+import { HISTORY_ITEMS, INITIAL_CATEGORIES } from './HomeScreen.constants';
 import { colors } from '../theme/colors';
 import {
-  CategoryIconKey,
   CategoryChartItem,
   CategoryItem,
+  HistoryTransactionFilter,
   HistoryTransaction,
+  TrackingMode,
 } from '../types';
-
-function toIsoDaysAgo(daysAgo: number) {
-  const date = new Date();
-  date.setDate(date.getDate() - daysAgo);
-  return date.toISOString();
-}
-
-const INITIAL_CATEGORIES: CategoryItem[] = [
-  {
-    id: '1',
-    category: 'Food',
-    type: 'expense',
-    limit: 1500,
-    icon: CategoryIconKey.Restaurant,
-  },
-  {
-    id: '2',
-    category: 'Transport',
-    type: 'expense',
-    limit: null,
-    icon: CategoryIconKey.Car,
-  },
-  {
-    id: '3',
-    category: 'Shopping',
-    type: 'expense',
-    limit: 4000,
-    icon: CategoryIconKey.BagHandle,
-  },
-  {
-    id: '4',
-    category: 'Health',
-    type: 'expense',
-    limit: null,
-    icon: CategoryIconKey.Medkit,
-  },
-  {
-    id: '5',
-    category: 'Bills',
-    type: 'expense',
-    limit: 3000,
-    icon: CategoryIconKey.Receipt,
-  },
-  {
-    id: '6',
-    category: 'Other',
-    type: 'expense',
-    limit: null,
-    icon: CategoryIconKey.EllipsisHorizontal,
-  },
-  {
-    id: '7',
-    category: 'Salary',
-    type: 'income',
-    limit: null,
-    icon: CategoryIconKey.Receipt,
-  },
-];
-
-const HISTORY_ITEMS: HistoryTransaction[] = [
-  {
-    id: '1',
-    amount: 620,
-    type: 'expense',
-    categoryId: '6',
-    date: toIsoDaysAgo(1),
-  },
-  {
-    id: '2',
-    amount: 900,
-    type: 'expense',
-    categoryId: '2',
-    date: toIsoDaysAgo(1),
-  },
-  {
-    id: '33',
-    amount: 2500,
-    type: 'income',
-    categoryId: '7',
-    date: toIsoDaysAgo(3),
-  },
-  {
-    id: '353',
-    amount: 2500,
-    type: 'expense',
-    categoryId: '6',
-    date: toIsoDaysAgo(3),
-  },
-  {
-    id: '3',
-    amount: 2500,
-    type: 'income',
-    categoryId: '7',
-    date: toIsoDaysAgo(10),
-  },
-  {
-    id: '4',
-    amount: 1200,
-    type: 'expense',
-    categoryId: '3',
-    date: toIsoDaysAgo(12),
-  },
-  {
-    id: '5',
-    amount: 4000,
-    type: 'income',
-    categoryId: '7',
-    date: toIsoDaysAgo(20),
-  },
-  {
-    id: '6',
-    amount: 750,
-    type: 'expense',
-    categoryId: '6',
-    date: toIsoDaysAgo(24),
-  },
-  {
-    id: '7',
-    amount: 1100,
-    type: 'expense',
-    categoryId: '5',
-    date: toIsoDaysAgo(30),
-  },
-  {
-    id: '8',
-    amount: 1100,
-    type: 'expense',
-    categoryId: '5',
-    date: toIsoDaysAgo(60),
-  },
-  {
-    id: '9',
-    amount: 1100,
-    type: 'expense',
-    categoryId: '5',
-    date: toIsoDaysAgo(90),
-  },
-];
 
 export function HomeScreen() {
   const [categories, setCategories] = useState<CategoryItem[]>(INITIAL_CATEGORIES);
@@ -160,12 +25,28 @@ export function HomeScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
+  const [isSettingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [trackingMode, setTrackingMode] = useState<TrackingMode>(TrackingMode.ExpensesOnly);
+  const [transactionFilter, setTransactionFilter] =
+    useState<HistoryTransactionFilter>(HistoryTransactionFilter.Expense);
   const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
+  const effectiveFilter: HistoryTransactionFilter =
+    trackingMode === TrackingMode.ExpensesOnly
+      ? HistoryTransactionFilter.Expense
+      : transactionFilter;
+  const visibleCategories = useMemo(
+    () =>
+      categories.filter(
+        (item) => effectiveFilter === HistoryTransactionFilter.All || item.type === effectiveFilter
+      ),
+    [categories, effectiveFilter]
+  );
+
   const chartItems = useMemo<CategoryChartItem[]>(
     () =>
-      categories.map((category) => {
+      visibleCategories.map((category) => {
         const amount = historyItems.reduce((sum, transaction) => {
           const isSameCategory = transaction.categoryId === category.id;
           const isSameType = transaction.type === category.type;
@@ -179,11 +60,22 @@ export function HomeScreen() {
           amount,
         };
       }),
-    [categories, historyItems]
+    [historyItems, visibleCategories]
   );
 
   const selectedCategory =
-    categories.find((item) => item.id === selectedCategoryId) ?? null;
+    visibleCategories.find((item) => item.id === selectedCategoryId) ?? null;
+
+  useEffect(() => {
+    if (!selectedCategoryId) {
+      return;
+    }
+
+    const isVisible = visibleCategories.some((item) => item.id === selectedCategoryId);
+    if (!isVisible) {
+      setSelectedCategoryId(null);
+    }
+  }, [selectedCategoryId, visibleCategories]);
 
   function handleSelectionChange(category: CategoryChartItem | null) {
     setSelectedCategoryId(category?.id ?? null);
@@ -228,6 +120,45 @@ export function HomeScreen() {
     setAddTransactionModalOpen(false);
   }
 
+  function handleTrackingModeChange(mode: TrackingMode) {
+    setTrackingMode(mode);
+    if (mode === TrackingMode.ExpensesOnly) {
+      setTransactionFilter(HistoryTransactionFilter.Expense);
+      return;
+    }
+    setTransactionFilter(HistoryTransactionFilter.All);
+  }
+
+  function handleAllPress() {
+    if (trackingMode === TrackingMode.ExpensesOnly) {
+      return;
+    }
+    setTrackingMode(TrackingMode.Both);
+    setTransactionFilter(HistoryTransactionFilter.All);
+  }
+
+  function handleExpensePress() {
+    setTransactionFilter(HistoryTransactionFilter.Expense);
+  }
+
+  function handleIncomePress() {
+    if (trackingMode === TrackingMode.ExpensesOnly) {
+      return;
+    }
+    setTrackingMode(TrackingMode.Both);
+    setTransactionFilter(HistoryTransactionFilter.Income);
+  }
+
+  function openManageCategories() {
+    setSettingsMenuOpen(false);
+    Alert.alert('Manage categories', 'Category manager will be added next.');
+  }
+
+  function openAccountSettings() {
+    setSettingsMenuOpen(false);
+    Alert.alert('Account settings', 'Account settings screen will be added next.');
+  }
+
   function saveAddedTransaction(newTransaction: AddTransactionInput) {
     setHistoryItems((previous) => [
       {
@@ -266,10 +197,18 @@ export function HomeScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <TopBalanceSection />
+        <TopBalanceSection
+          onSettingsPress={() => setSettingsMenuOpen(true)}
+          onExpensePress={handleExpensePress}
+          onIncomePress={handleIncomePress}
+          onAllPress={handleAllPress}
+          activeFilter={effectiveFilter}
+          trackingMode={trackingMode}
+        />
         <View style={styles.chartSection}>
           <CategoryBarChart
             items={chartItems}
+            selectedItemId={selectedCategory?.id ?? null}
             onSelectionChange={handleSelectionChange}
           />
         </View>
@@ -277,7 +216,7 @@ export function HomeScreen() {
           transactions={historyItems}
           categories={categories}
           title="History"
-          transactionTypeFilter="expense"
+          transactionTypeFilter={effectiveFilter}
           categoryIdFilter={selectedCategory?.id ?? null}
           selectedCategory={selectedCategory}
           onActionPress={() => setLimitModalVisibility(true)}
@@ -294,9 +233,21 @@ export function HomeScreen() {
       />
       <AddTransactionModal
         visible={isAddTransactionModalOpen}
-        categories={categories}
+        categories={
+          trackingMode === TrackingMode.ExpensesOnly
+            ? categories.filter((item) => item.type === HistoryTransactionFilter.Expense)
+            : categories
+        }
         onClose={closeAddTransactionModal}
         onSave={saveAddedTransaction}
+      />
+      <SettingsMenuSheet
+        visible={isSettingsMenuOpen}
+        trackingMode={trackingMode}
+        onClose={() => setSettingsMenuOpen(false)}
+        onTrackingModeChange={handleTrackingModeChange}
+        onManageCategoriesPress={openManageCategories}
+        onAccountPress={openAccountSettings}
       />
       {transactionToEdit && (
         <EditTransactionModal
