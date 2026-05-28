@@ -41,7 +41,7 @@ export function AddTransactionModal({
 
     setAmountInput('');
     setSelectedCategoryId(categories[0]?.id ?? null);
-  }, [categories, visible]);
+  }, [visible]);
 
   const categoryById = useMemo(
     () => new Map(categories.map((item) => [item.id, item])),

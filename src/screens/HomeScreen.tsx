@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
@@ -9,19 +10,18 @@ import { AddTransactionInput, AddTransactionModal } from '../components/modals/a
 import { SettingsMenuSheet } from '../components/SettingsMenuSheet';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
-import { HISTORY_ITEMS, INITIAL_CATEGORIES } from './HomeScreen.constants';
+import { useFinanceData } from '../state/FinanceDataContext';
 import { colors } from '../theme/colors';
 import {
   CategoryChartItem,
-  CategoryItem,
   HistoryTransactionFilter,
   HistoryTransaction,
   TrackingMode,
 } from '../types';
 
 export function HomeScreen() {
-  const [categories, setCategories] = useState<CategoryItem[]>(INITIAL_CATEGORIES);
-  const [historyItems, setHistoryItems] = useState<HistoryTransaction[]>(HISTORY_ITEMS);
+  const router = useRouter();
+  const { categories, setCategories, historyItems, setHistoryItems } = useFinanceData();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
@@ -151,7 +151,7 @@ export function HomeScreen() {
 
   function openManageCategories() {
     setSettingsMenuOpen(false);
-    Alert.alert('Manage categories', 'Category manager will be added next.');
+    router.push('/manage-categories');
   }
 
   function openAccountSettings() {
@@ -231,16 +231,18 @@ export function HomeScreen() {
         onClose={() => setLimitModalVisibility(false)}
         onSave={saveLimit}
       />
-      <AddTransactionModal
-        visible={isAddTransactionModalOpen}
-        categories={
-          trackingMode === TrackingMode.ExpensesOnly
-            ? categories.filter((item) => item.type === HistoryTransactionFilter.Expense)
-            : categories
-        }
-        onClose={closeAddTransactionModal}
-        onSave={saveAddedTransaction}
-      />
+      {isAddTransactionModalOpen && (
+        <AddTransactionModal
+          visible
+          categories={
+            trackingMode === TrackingMode.ExpensesOnly
+              ? categories.filter((item) => item.type === HistoryTransactionFilter.Expense)
+              : categories
+          }
+          onClose={closeAddTransactionModal}
+          onSave={saveAddedTransaction}
+        />
+      )}
       <SettingsMenuSheet
         visible={isSettingsMenuOpen}
         trackingMode={trackingMode}
@@ -249,13 +251,15 @@ export function HomeScreen() {
         onManageCategoriesPress={openManageCategories}
         onAccountPress={openAccountSettings}
       />
-      <EditTransactionModal
-        visible={Boolean(transactionToEdit)}
-        transaction={transactionToEdit}
-        categories={categories}
-        onClose={closeEditTransactionModal}
-        onSave={saveEditedTransaction}
-      />
+      {transactionToEdit && (
+        <EditTransactionModal
+          visible
+          transaction={transactionToEdit}
+          categories={categories}
+          onClose={closeEditTransactionModal}
+          onSave={saveEditedTransaction}
+        />
+      )}
       <DeleteTransactionModal
         visible={Boolean(transactionToDelete)}
         transaction={transactionToDelete}

@@ -15,7 +15,7 @@ import { CategoryItem, HistoryTransaction, TransactionType } from '../../types';
 
 type EditTransactionModalProps = {
   visible: boolean;
-  transaction: HistoryTransaction | null;
+  transaction: HistoryTransaction;
   categories: CategoryItem[];
   onClose: () => void;
   onSave: (transaction: HistoryTransaction) => void;
@@ -28,18 +28,13 @@ export function EditTransactionModal({
   onClose,
   onSave,
 }: EditTransactionModalProps) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
-  const [amountInput, setAmountInput] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(transaction.categoryId);
+  const [amountInput, setAmountInput] = useState(String(Math.abs(transaction.amount)));
 
   useEffect(() => {
-
-    if (!transaction) {
-      return;
-    }
-
     setSelectedCategoryId(transaction.categoryId);
     setAmountInput(String(Math.abs(transaction.amount)));
-  }, [transaction, visible]);
+  }, [transaction]);
 
   const categoryById = useMemo(
     () => new Map(categories.map((item) => [item.id, item])),
@@ -51,10 +46,6 @@ export function EditTransactionModal({
   const selectedType: TransactionType = selectedCategory?.type ?? 'expense';
 
   function handleSave() {
-    if (!transaction) {
-      return;
-    }
-
     if (!selectedCategory) {
       Alert.alert('Invalid category', 'Please select a category.');
       return;
@@ -72,10 +63,6 @@ export function EditTransactionModal({
       categoryId: selectedCategory.id,
       amount: Math.abs(parsedAmount),
     });
-  }
-
-  if (!transaction) {
-    return null;
   }
 
   return (
