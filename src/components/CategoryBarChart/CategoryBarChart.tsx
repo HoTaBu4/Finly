@@ -14,6 +14,7 @@ const MAX_VISIBLE_WITHOUT_SCROLL = 5;
 const CHART_HEIGHT = 300;
 const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
+const STATIC_BAR_MAX_WIDTH = 140;
 const BAR_GAP = 20;
 const MIN_BAR_PERCENT = 5;
 const SCROLL_VISIBLE_EQUIVALENT_ITEMS = 4.5;
@@ -47,6 +48,12 @@ export function CategoryBarChart({
         SCROLL_VISIBLE_EQUIVALENT_ITEMS
       : BAR_MIN_WIDTH;
   const barWidth = clampNumber(computedBarWidth, BAR_MIN_WIDTH, BAR_MAX_WIDTH);
+  const staticComputedBarWidth =
+    containerWidth > 0
+      ? (containerWidth - CONTENT_EDGE_PADDING * 2 - Math.max(items.length - 1, 0) * BAR_GAP) /
+        Math.max(items.length, 1)
+      : BAR_MAX_WIDTH;
+  const staticBarWidth = clampNumber(staticComputedBarWidth, BAR_MIN_WIDTH, STATIC_BAR_MAX_WIDTH);
   const itemSpan = barWidth + BAR_GAP;
   const contentWidth =
     items.length * barWidth +
@@ -121,7 +128,7 @@ export function CategoryBarChart({
       {!needsScroll ? (
         <View style={styles.staticRow}>
           {items.map((item) => (
-            <View key={item.id} style={styles.staticBarWrap}>
+            <View key={item.id} style={[styles.staticBarWrap, { width: staticBarWidth }]}>
               {renderBarItem(item)}
             </View>
           ))}
@@ -174,10 +181,9 @@ const styles = StyleSheet.create({
     height: '100%',
     gap: BAR_GAP,
     alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   staticBarWrap: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
