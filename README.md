@@ -26,6 +26,14 @@
 - Форми і валідація: React Hook Form + Zod.
 - Графіки: `victory-native` або `react-native-gifted-charts`.
 
+### 3.1 Архітектура стану і синку (правило для проєкту)
+- Уся синхронізація з сервером керується в одному місці через Zustand store.
+- Store зберігає сирі дані (`categories`, `transactions`, `loading`, `error`, `lastSyncedAt`).
+- Store надає actions для бекенду (`fetch`, `create`, `update`, `delete`, `sync`).
+- Компоненти не роблять серверну логіку напряму; вони викликають лише store actions.
+- Derived data для UI (фільтрація, агрегація, секції історії, дані графіків) мають будуватись через store-level selectors/hooks.
+- Компоненти повинні бути максимально "тонкими": рендер + UI-обробники.
+
 ## 4. Apple Pay / Google Pay
 На практиці додаток не зможе просто прочитати повну історію транзакцій з Apple Pay або Google Pay як банківську виписку.
 
