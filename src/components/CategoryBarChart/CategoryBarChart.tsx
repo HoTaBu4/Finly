@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { CategoryBarChartItem } from './CategoryBarChartItem';
+import { CategoryBarChartColumn } from './CategoryBarChartColumn';
 import { colors } from '../../theme/colors';
-import { CategoryChartItem } from '../../types';
+import { CategoryChartItem, TransactionType } from '../../types';
 
 type CategoryBarChartProps = {
   items: CategoryChartItem[];
@@ -16,7 +16,8 @@ const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
 const STATIC_BAR_MAX_WIDTH = 140;
 const BAR_GAP = 20;
-const MIN_BAR_PERCENT = 5;
+const MIN_NON_ZERO_BAR_PERCENT = 4;
+const SCALE_SPREAD_RATIO_THRESHOLD = 8;
 const SCROLL_VISIBLE_EQUIVALENT_ITEMS = 4.5;
 const SCROLL_VISIBLE_GAP_COUNT = 4;
 const CONTENT_EDGE_PADDING = BAR_GAP;
@@ -26,20 +27,31 @@ function clampNumber(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function formatAmountFromValue(value: number) {
-  const formatted = new Intl.NumberFormat('uk-UA', {
-    maximumFractionDigits: 0,
-  }).format(value);
-  return `${formatted} $`;
-}
-
 export function CategoryBarChart({
   items,
   selectedItemId = null,
   onSelectionChange,
 }: CategoryBarChartProps) {
   const [containerWidth, setContainerWidth] = useState(0);
-  const maxValue = Math.max(...items.map((item) => item.amount), 1);
+  const maxValue = Math.max(
+    ...items.map((item) => item.amount),
+    ...items.map((item) => (item.type === TransactionType.Expense ? item.limit ?? 0 : 0)),
+    1
+  );
+  const positiveValues = items
+    .flatMap((item) =>
+      item.type === TransactionType.Expense
+        ? [item.amount, item.limit ?? 0]
+        : [item.amount]
+    )
+    .filter((value) => value > 0);
+  const smallestPositiveValue =
+    positiveValues.length > 0
+      ? Math.min(...positiveValues)
+      : maxValue;
+  const useSqrtScale =
+    smallestPositiveValue > 0 &&
+    maxValue / smallestPositiveValue >= SCALE_SPREAD_RATIO_THRESHOLD;
   const needsScroll = items.length > MAX_VISIBLE_WITHOUT_SCROLL;
 
   const computedBarWidth =
@@ -69,8 +81,6 @@ export function CategoryBarChart({
 
     const offsets: number[] = [0];
 
-    // Middle positions: always land on "two-sided peek" offsets
-    // so users see that content exists on both sides.
     for (
       let offset = middlePeekOffset;
       offset < maxOffset - middlePeekOffset;
@@ -88,31 +98,28 @@ export function CategoryBarChart({
 
   function createSelectHandler(item: CategoryChartItem) {
     return () => {
-      const nextId = selectedItemId === item.id ? null : item.id;
-      const nextItem = items.find((chartItem) => chartItem.id === nextId);
-      onSelectionChange?.(nextItem ?? null);
+      if (selectedItemId === item.id) {
+        onSelectionChange?.(null);
+        return;
+      }
+
+      onSelectionChange?.(item);
     };
   }
 
-  const renderBarItem = (item: CategoryChartItem) => {
-    const heightPercent = Math.max(
-      MIN_BAR_PERCENT,
-      Math.round((item.amount / maxValue) * 100)
-    );
-    const amountLabel = formatAmountFromValue(item.amount);
-    const isSelected = selectedItemId === item.id;
-    const isBlurred = selectedItemId !== null && !isSelected;
+  function renderColumn(item: CategoryChartItem) {
     return (
-      <CategoryBarChartItem
-        amountLabel={amountLabel}
-        heightPercent={heightPercent}
-        iconName={item.icon}
-        isSelected={isSelected}
-        isBlurred={isBlurred}
+      <CategoryBarChartColumn
+        item={item}
+        maxValue={maxValue}
+        useSqrtScale={useSqrtScale}
+        minNonZeroBarPercent={MIN_NON_ZERO_BAR_PERCENT}
+        isSelected={selectedItemId === item.id}
+        isBlurred={selectedItemId !== null && selectedItemId !== item.id}
         onPress={createSelectHandler(item)}
       />
     );
-  };
+  }
 
   return (
     <View
@@ -129,7 +136,7 @@ export function CategoryBarChart({
         <View style={styles.staticRow}>
           {items.map((item) => (
             <View key={item.id} style={[styles.staticBarWrap, { width: staticBarWidth }]}>
-              {renderBarItem(item)}
+              {renderColumn(item)}
             </View>
           ))}
         </View>
@@ -140,7 +147,9 @@ export function CategoryBarChart({
           removeClippedSubviews={false}
           keyExtractor={(item, index) => `${item.id}-${index}`}
           renderItem={({ item }) => (
-            <View style={[styles.scrollBarWrap, { width: barWidth }]}>{renderBarItem(item)}</View>
+            <View style={[styles.scrollBarWrap, { width: barWidth }]}>
+              {renderColumn(item)}
+            </View>
           )}
           ItemSeparatorComponent={() => <View style={{ width: BAR_GAP }} />}
           showsHorizontalScrollIndicator={false}

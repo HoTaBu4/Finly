@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
-import { HistoryTransaction } from '../../types';
+import { HistoryTransaction, TransactionType } from '../../types';
 
 type TransactionRowProps = {
   rowKey: string;
@@ -186,10 +186,10 @@ export function TransactionRow({
       <Text
         style={[
           styles.amountText,
-          item.type === 'income' ? styles.incomeText : styles.expenseText,
+          item.type === TransactionType.Income ? styles.incomeText : styles.expenseText,
         ]}
       >
-        {item.type === 'income' ? '+' : '-'}
+        {item.type === TransactionType.Income ? '+' : '-'}
         {formatMoney(Math.abs(item.amount))}
       </Text>
     </View>

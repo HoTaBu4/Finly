@@ -1,10 +1,12 @@
 import { useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
+import { toTransactionType } from '../../utils/transactionFilters';
 import {
   CategoryItem,
   HistoryTransaction,
   HistoryTransactionFilter,
+  TransactionType,
 } from '../../types';
 import { TransactionRow } from './HIstoryByPeriod';
 
@@ -56,11 +58,13 @@ export function HistoryByPeriod({
   const historyTitle = selectedCategory
     ? `History: ${selectedCategory.category}`
     : title;
-  const historyActionLabel = selectedCategory
-    ? selectedCategory.limit != null
-      ? 'Edit limit'
-      : 'Add limit'
-    : undefined;
+  const canEditLimit = selectedCategory?.type === TransactionType.Expense;
+  const historyActionLabel =
+    selectedCategory && canEditLimit
+      ? selectedCategory.limit != null
+        ? 'Edit limit'
+        : 'Add limit'
+      : undefined;
 
   const normalizedCategoryIdFilter = categoryIdFilter?.trim() ?? null;
   const categoryNamesById = useMemo(
@@ -69,10 +73,12 @@ export function HistoryByPeriod({
   );
 
   const sections = useMemo<PeriodSection[]>(() => {
+    const filteredTransactionType = toTransactionType(transactionTypeFilter);
+
     const filteredTransactions = transactions.filter((transaction) => {
       const matchesType =
-        transactionTypeFilter === HistoryTransactionFilter.All ||
-        transaction.type === transactionTypeFilter;
+        filteredTransactionType === null ||
+        transaction.type === filteredTransactionType;
       const matchesCategory =
         !normalizedCategoryIdFilter || transaction.categoryId === normalizedCategoryIdFilter;
       return matchesType && matchesCategory;

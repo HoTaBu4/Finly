@@ -84,7 +84,7 @@ export function AddTransactionModal({
         >
           <Text style={styles.modalTitle}>Add transaction</Text>
           <Text style={styles.modalSubtitle}>
-            {selectedCategory?.type === 'income' ? 'Income' : 'Expense'}
+            {selectedCategory?.type === TransactionType.Income ? 'Income' : 'Expense'}
           </Text>
 
           <Text style={styles.fieldLabel}>Category</Text>

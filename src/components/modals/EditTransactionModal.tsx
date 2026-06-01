@@ -43,7 +43,7 @@ export function EditTransactionModal({
   const selectedCategory = selectedCategoryId
     ? categoryById.get(selectedCategoryId) ?? null
     : null;
-  const selectedType: TransactionType = selectedCategory?.type ?? 'expense';
+  const selectedType: TransactionType = selectedCategory?.type ?? TransactionType.Expense;
 
   function handleSave() {
     if (!selectedCategory) {
@@ -84,7 +84,7 @@ export function EditTransactionModal({
             <View style={styles.headerTextWrap}>
               <Text style={styles.modalTitle}>Edit transaction</Text>
               <Text style={styles.modalSubtitle}>
-                {selectedType === 'expense' ? 'Expense' : 'Income'}
+                {selectedType === TransactionType.Expense ? 'Expense' : 'Income'}
               </Text>
             </View>
           </View>

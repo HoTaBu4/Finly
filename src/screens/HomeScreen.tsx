@@ -12,10 +12,12 @@ import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { useFinanceData } from '../state/FinanceDataContext';
 import { colors } from '../theme/colors';
+import { toTransactionType } from '../utils/transactionFilters';
 import {
   CategoryChartItem,
   HistoryTransactionFilter,
   HistoryTransaction,
+  TransactionType,
   TrackingMode,
 } from '../types';
 
@@ -32,16 +34,17 @@ export function HomeScreen() {
   const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
-  const effectiveFilter: HistoryTransactionFilter =
+  const effectiveFilter =
     trackingMode === TrackingMode.ExpensesOnly
       ? HistoryTransactionFilter.Expense
       : transactionFilter;
+  const effectiveTransactionType = toTransactionType(effectiveFilter);
   const visibleCategories = useMemo(
     () =>
       categories.filter(
-        (item) => effectiveFilter === HistoryTransactionFilter.All || item.type === effectiveFilter
+        (item) => effectiveTransactionType === null || item.type === effectiveTransactionType
       ),
-    [categories, effectiveFilter]
+    [categories, effectiveTransactionType]
   );
 
   const chartItems = useMemo<CategoryChartItem[]>(
@@ -82,11 +85,15 @@ export function HomeScreen() {
   }
 
   function setLimitModalVisibility(isOpen: boolean) {
+    if (isOpen && selectedCategory?.type !== TransactionType.Expense) {
+      return;
+    }
     setLimitModalOpen(isOpen);
   }
 
   function saveLimit(limit: number | null) {
-    if (!selectedCategory) {
+    if (!selectedCategory || selectedCategory.type !== TransactionType.Expense) {
+      setLimitModalVisibility(false);
       return;
     }
 
@@ -219,13 +226,17 @@ export function HomeScreen() {
           transactionTypeFilter={effectiveFilter}
           categoryIdFilter={selectedCategory?.id ?? null}
           selectedCategory={selectedCategory}
-          onActionPress={() => setLimitModalVisibility(true)}
+          onActionPress={
+            selectedCategory?.type === TransactionType.Expense
+              ? () => setLimitModalVisibility(true)
+              : undefined
+          }
           onTransactionEdit={handleEditTransaction}
           onTransactionDelete={handleDeleteTransaction}
         />
       </ScrollView>
       <LimitModal
-        visible={isLimitModalOpen}
+        visible={isLimitModalOpen && selectedCategory?.type === TransactionType.Expense}
         categoryName={selectedCategory?.category}
         currentLimit={selectedCategory?.limit ?? null}
         onClose={() => setLimitModalVisibility(false)}
@@ -236,7 +247,7 @@ export function HomeScreen() {
           visible
           categories={
             trackingMode === TrackingMode.ExpensesOnly
-              ? categories.filter((item) => item.type === HistoryTransactionFilter.Expense)
+              ? categories.filter((item) => item.type === TransactionType.Expense)
               : categories
           }
           onClose={closeAddTransactionModal}

@@ -50,14 +50,14 @@ export function CategorySelectDropdown({
   const categorySections: CategorySection[] = useMemo(
     () => [
       {
-        type: 'income',
+        type: TransactionType.Income,
         title: 'Income categories',
-        categories: categories.filter((item) => item.type === 'income'),
+        categories: categories.filter((item) => item.type === TransactionType.Income),
       },
       {
-        type: 'expense',
+        type: TransactionType.Expense,
         title: 'Expense categories',
-        categories: categories.filter((item) => item.type === 'expense'),
+        categories: categories.filter((item) => item.type === TransactionType.Expense),
       },
     ],
     [categories]

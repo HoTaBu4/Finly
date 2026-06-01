@@ -1,4 +1,7 @@
-export type TransactionType = 'income' | 'expense';
+export enum TransactionType {
+  Income = 'income',
+  Expense = 'expense',
+}
 
 export enum HistoryTransactionFilter {
   Expense = 'expense',

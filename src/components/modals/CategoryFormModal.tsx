@@ -60,7 +60,7 @@ export function CategoryFormModal({
   onSave,
 }: CategoryFormModalProps) {
   const [nameInput, setNameInput] = useState('');
-  const [type, setType] = useState<TransactionType>('expense');
+  const [type, setType] = useState<TransactionType>(TransactionType.Expense);
   const [selectedIcon, setSelectedIcon] = useState<CategoryIconKey>(CategoryIconKey.Cart);
 
   const isEditing = Boolean(initialCategory);
@@ -72,10 +72,12 @@ export function CategoryFormModal({
     }
 
     setNameInput(initialCategory?.category ?? '');
-    setType(initialCategory?.type ?? 'expense');
+    setType(initialCategory?.type ?? TransactionType.Expense);
     setSelectedIcon(
       initialCategory?.icon ??
-      (initialCategory?.type === 'income' ? CategoryIconKey.Cash : CategoryIconKey.Cart)
+      (initialCategory?.type === TransactionType.Income
+        ? CategoryIconKey.Cash
+        : CategoryIconKey.Cart)
     );
   }, [initialCategory, visible]);
 
@@ -117,18 +119,28 @@ export function CategoryFormModal({
           <Text style={styles.fieldLabel}>Type</Text>
           <View style={styles.typeRow}>
             <Pressable
-              style={[styles.typeButton, type === 'expense' && styles.typeButtonActive]}
-              onPress={() => setType('expense')}
+              style={[styles.typeButton, type === TransactionType.Expense && styles.typeButtonActive]}
+              onPress={() => setType(TransactionType.Expense)}
             >
-              <Text style={[styles.typeButtonText, type === 'expense' && styles.typeButtonTextActive]}>
+              <Text
+                style={[
+                  styles.typeButtonText,
+                  type === TransactionType.Expense && styles.typeButtonTextActive,
+                ]}
+              >
                 Expense
               </Text>
             </Pressable>
             <Pressable
-              style={[styles.typeButton, type === 'income' && styles.typeButtonActive]}
-              onPress={() => setType('income')}
+              style={[styles.typeButton, type === TransactionType.Income && styles.typeButtonActive]}
+              onPress={() => setType(TransactionType.Income)}
             >
-              <Text style={[styles.typeButtonText, type === 'income' && styles.typeButtonTextActive]}>
+              <Text
+                style={[
+                  styles.typeButtonText,
+                  type === TransactionType.Income && styles.typeButtonTextActive,
+                ]}
+              >
                 Income
               </Text>
             </Pressable>
