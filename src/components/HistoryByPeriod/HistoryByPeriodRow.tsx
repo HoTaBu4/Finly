@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
+import { formatMonth } from '../../utils/formatters';
 import { toTransactionType } from '../../utils/transactionFilters';
 import {
   CategoryItem,
@@ -36,12 +37,6 @@ function sortByDateDesc(items: HistoryTransaction[]) {
     const secondTime = new Date(second.date).getTime();
     return secondTime - firstTime;
   });
-}
-
-function formatMonthLabel(year: number, month: number) {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-  }).format(new Date(year, month, 1));
 }
 
 export function HistoryByPeriod({
@@ -103,7 +98,7 @@ export function HistoryByPeriod({
 
       monthlyGrouped.set(key, {
         key,
-        label: formatMonthLabel(year, month),
+        label: formatMonth(year, month),
         year,
         month,
         items: [transaction],

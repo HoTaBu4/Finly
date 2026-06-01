@@ -1,3 +1,5 @@
+import { formatMoney } from '../../utils/formatters';
+
 type BuildBarVisualStateInput = {
   heightPercent: number;
   limitPercent: number | null;
@@ -24,14 +26,6 @@ const TINY_OVER_INDICATOR_PERCENT_THRESHOLD = 3;
 
 export function clampNumber(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
-}
-
-export function formatAmountFromValue(value: number) {
-  const formatted = new Intl.NumberFormat('uk-UA', {
-    maximumFractionDigits: 0,
-  }).format(value);
-
-  return `${formatted} $`;
 }
 
 export function toScaledPercent(
@@ -92,7 +86,7 @@ export function buildBarVisualState({
     rawOverLimitPercent < TINY_OVER_INDICATOR_PERCENT_THRESHOLD &&
     !isSelected;
 
-  const tinyOverLabel = `-${formatAmountFromValue(overLimitValue)}`;
+  const tinyOverLabel = `-${formatMoney(overLimitValue, { locale: 'uk-UA' })}`;
   const infoChipOverLabel =
     isOverLimit && overLimitLabel
       ? `Over ${overLimitLabel.replace('+', '')}`

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { CategoryItem, HistoryTransaction } from '../../types';
+import { formatMoney } from '../../utils/formatters';
 
 type DeleteTransactionModalProps = {
   visible: boolean;
@@ -10,13 +11,6 @@ type DeleteTransactionModalProps = {
   onClose: () => void;
   onConfirm: (transaction: HistoryTransaction) => void;
 };
-
-function formatAmount(amount: number) {
-  const formatted = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 0,
-  }).format(Math.abs(amount));
-  return `${formatted} $`;
-}
 
 export function DeleteTransactionModal({
   visible,
@@ -64,7 +58,7 @@ export function DeleteTransactionModal({
             <Text style={styles.summaryValue}>{transactionCategoryName}</Text>
             <Text style={styles.summaryLabel}>Amount</Text>
             <Text style={styles.summaryValue}>
-              {transaction ? formatAmount(transaction.amount) : '-'}
+              {transaction ? formatMoney(Math.abs(transaction.amount)) : '-'}
             </Text>
           </View>
 

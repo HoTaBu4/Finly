@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { HistoryTransaction, TransactionType } from '../../types';
+import { formatDate, formatMoney } from '../../utils/formatters';
 
 type TransactionRowProps = {
   rowKey: string;
@@ -31,27 +32,6 @@ function getActionsWidth(hasEdit: boolean, hasDelete: boolean) {
     (hasEdit && hasDelete ? ACTION_GAP : 0) +
     ACTIONS_LEFT_PADDING
   );
-}
-
-function formatMoney(value: number) {
-  const formatted = new Intl.NumberFormat('en-US', {
-    maximumFractionDigits: 0,
-  }).format(value);
-  return `${formatted} $`;
-}
-
-function formatTransactionDate(dateText: string) {
-  const date = new Date(dateText);
-  if (Number.isNaN(date.getTime())) {
-    return '';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    day: 'numeric',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(date);
 }
 
 export function TransactionRow({
@@ -181,7 +161,7 @@ export function TransactionRow({
     <View style={styles.row}>
       <View style={styles.rowLeft}>
         <Text style={styles.categoryText}>{categoryLabel}</Text>
-        <Text style={styles.dateText}>{formatTransactionDate(item.date)}</Text>
+        <Text style={styles.dateText}>{formatDate(item.date)}</Text>
       </View>
       <Text
         style={[

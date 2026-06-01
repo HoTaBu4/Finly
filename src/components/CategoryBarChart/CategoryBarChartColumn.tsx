@@ -1,7 +1,8 @@
 import { colors } from '../../theme/colors';
 import { CategoryChartItem, TransactionType } from '../../types';
+import { formatMoney } from '../../utils/formatters';
 import { CategoryBarChartItem } from './CategoryBarChartItem';
-import { formatAmountFromValue, toScaledPercent } from './categoryBarChartItem.utils';
+import { toScaledPercent } from './categoryBarChartItem.utils';
 
 type CategoryBarChartColumnProps = {
   item: CategoryChartItem;
@@ -35,18 +36,18 @@ export function CategoryBarChartColumn({
     effectiveLimit !== null
       ? Math.round(toScaledPercent(effectiveLimit, maxValue, useSqrtScale))
       : null;
-  const amountLabel = formatAmountFromValue(item.amount);
+  const amountLabel = formatMoney(item.amount, { locale: 'uk-UA' });
   const overLimitValue =
     effectiveLimit !== null
       ? Math.max(0, item.amount - effectiveLimit)
       : 0;
   const limitLabel =
     effectiveLimit !== null
-      ? formatAmountFromValue(effectiveLimit)
+      ? formatMoney(effectiveLimit, { locale: 'uk-UA' })
       : null;
   const overLimitLabel =
     overLimitValue > 0
-      ? `+${formatAmountFromValue(overLimitValue)}`
+      ? `+${formatMoney(overLimitValue, { locale: 'uk-UA' })}`
       : null;
 
   return (
