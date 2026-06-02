@@ -10,7 +10,7 @@ type BuildBarVisualStateInput = {
 
 type BuildBarVisualStateResult = {
   isOverLimit: boolean;
-  useFullRedBar: boolean;
+  limitVisualPercent: number | null;
   overLimitPercent: number;
   baseBarHeightPercent: number;
   limitAnchorPercent: number;
@@ -19,9 +19,9 @@ type BuildBarVisualStateResult = {
   infoChipOverLabel: string | null;
 };
 
-const FULL_RED_OVER_LIMIT_PERCENT_THRESHOLD = 2.5;
-const SMALL_BAR_FULL_RED_HEIGHT_THRESHOLD = 12;
-const MIN_VISIBLE_OVER_LIMIT_PERCENT = 1.1;
+const MIN_VISIBLE_LIMIT_PERCENT = 1.2;
+const MIN_VISIBLE_LIMIT_GAP_PERCENT = 1.4;
+const MIN_VISIBLE_BASE_WHEN_OVER_LIMIT_PERCENT = 2.6;
 const TINY_OVER_INDICATOR_PERCENT_THRESHOLD = 3;
 
 export function clampNumber(value: number, min: number, max: number) {
@@ -59,30 +59,28 @@ export function buildBarVisualState({
 }: BuildBarVisualStateInput): BuildBarVisualStateResult {
   const hasLimit = limitPercent !== null && limitPercent > 0;
   const isOverLimit = hasLimit && overLimitValue > 0;
+  let limitVisualPercent =
+    hasLimit ? Math.max(limitPercent ?? 0, MIN_VISIBLE_LIMIT_PERCENT) : null;
+  if (
+    hasLimit &&
+    !isOverLimit &&
+    limitVisualPercent !== null &&
+    limitVisualPercent > heightPercent &&
+    limitVisualPercent - heightPercent < MIN_VISIBLE_LIMIT_GAP_PERCENT
+  ) {
+    limitVisualPercent = Math.min(100, heightPercent + MIN_VISIBLE_LIMIT_GAP_PERCENT);
+  }
   const rawOverLimitPercent =
     isOverLimit && limitPercent !== null
       ? Math.max(0, heightPercent - limitPercent)
       : 0;
-
-  const useFullRedBar =
-    isOverLimit &&
-    rawOverLimitPercent < FULL_RED_OVER_LIMIT_PERCENT_THRESHOLD &&
-    heightPercent <= SMALL_BAR_FULL_RED_HEIGHT_THRESHOLD;
-
-  const overLimitPercent =
-    useFullRedBar || !isOverLimit
-      ? 0
-      : Math.max(rawOverLimitPercent, MIN_VISIBLE_OVER_LIMIT_PERCENT);
-
-  const baseBarHeightPercent =
-    useFullRedBar
-      ? heightPercent
-      : Math.max(0, heightPercent - overLimitPercent);
-
-  const limitAnchorPercent = Math.max(heightPercent, limitPercent ?? 0);
+  const overLimitPercent = isOverLimit ? rawOverLimitPercent : 0;
+  const baseBarHeightPercent = isOverLimit
+    ? Math.max(limitVisualPercent ?? 0, MIN_VISIBLE_BASE_WHEN_OVER_LIMIT_PERCENT)
+    : heightPercent;
+  const limitAnchorPercent = Math.max(heightPercent, limitVisualPercent ?? 0);
   const showTinyOverIndicator =
     isOverLimit &&
-    !useFullRedBar &&
     rawOverLimitPercent < TINY_OVER_INDICATOR_PERCENT_THRESHOLD &&
     !isSelected;
 
@@ -94,7 +92,7 @@ export function buildBarVisualState({
 
   return {
     isOverLimit,
-    useFullRedBar,
+    limitVisualPercent,
     overLimitPercent,
     baseBarHeightPercent,
     limitAnchorPercent,

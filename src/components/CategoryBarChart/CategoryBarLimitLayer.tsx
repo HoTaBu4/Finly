@@ -4,7 +4,7 @@ export type CategoryBarLimitPalette = {
   guideBackground: string;
   guideBorder: string;
   guideStripe: string;
-  overLimitBackground: string;
+  overLimitSolid: string;
 };
 
 type CategoryBarLimitLayerProps = {
@@ -17,8 +17,10 @@ type CategoryBarLimitLayerProps = {
 
 const LIMIT_STRIPE_COUNT = 22;
 const LIMIT_STRIPE_STEP = 12;
-const STACK_JOIN_OVERLAP = -4;
-
+const OVER_LIMIT_VISUAL_RULES = {
+  minHeight: 8,
+  joinOverlap: 4,
+}
 export function CategoryBarLimitLayer({
   limitPercent,
   baseBarHeightPercent,
@@ -69,9 +71,11 @@ export function CategoryBarLimitLayer({
             {
               bottom: `${baseBarHeightPercent}%`,
               height: `${overLimitPercent}%`,
+              minHeight: OVER_LIMIT_VISUAL_RULES.minHeight,
               borderTopLeftRadius: barRadius,
               borderTopRightRadius: barRadius,
-              backgroundColor: palette.overLimitBackground,
+              backgroundColor: palette.overLimitSolid,
+              marginBottom: -OVER_LIMIT_VISUAL_RULES.joinOverlap,
             },
           ]}
         />
@@ -85,7 +89,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    marginBottom: STACK_JOIN_OVERLAP,
     overflow: 'hidden',
     zIndex: 2,
   },

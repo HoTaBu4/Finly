@@ -27,7 +27,6 @@ const LIMIT_PALETTE = {
   guideBackground: 'rgba(123, 108, 255, 0.14)',
   guideBorder: 'rgba(123, 108, 255, 0.24)',
   guideStripe: 'rgba(123, 108, 255, 0.22)',
-  overLimitBackground: 'rgba(228, 95, 95, 0.72)',
   overLimitSolid: '#de7474',
 };
 
@@ -80,7 +79,7 @@ export function CategoryBarChartItem({
   });
 
   const {
-    useFullRedBar,
+    limitVisualPercent,
     overLimitPercent,
     baseBarHeightPercent,
     limitAnchorPercent,
@@ -119,15 +118,13 @@ export function CategoryBarChartItem({
         ]}
       >
         <View style={styles.barArea}>
-          {!useFullRedBar ? (
-            <CategoryBarLimitLayer
-              limitPercent={limitPercent}
-              baseBarHeightPercent={baseBarHeightPercent}
-              overLimitPercent={overLimitPercent}
-              barRadius={BAR_BODY_RADIUS}
-              palette={LIMIT_PALETTE}
-            />
-          ) : null}
+          <CategoryBarLimitLayer
+            limitPercent={limitVisualPercent}
+            baseBarHeightPercent={baseBarHeightPercent}
+            overLimitPercent={overLimitPercent}
+            barRadius={BAR_BODY_RADIUS}
+            palette={LIMIT_PALETTE}
+          />
           {infoChipLabel ? (
             <Animated.View
               style={[
@@ -158,9 +155,7 @@ export function CategoryBarChartItem({
               styles.bar,
               {
                 height: `${baseBarHeightPercent}%`,
-                backgroundColor: useFullRedBar
-                  ? LIMIT_PALETTE.overLimitSolid
-                  : barColor,
+                backgroundColor: barColor,
                 borderRadius: BAR_BODY_RADIUS,
               },
             ]}
