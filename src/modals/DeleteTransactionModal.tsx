@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors } from '../../theme/colors';
-import { CategoryItem, HistoryTransaction } from '../../types';
-import { formatMoney } from '../../utils/formatters';
+import { colors } from '../theme/colors';
+import { CategoryItem, HistoryTransaction } from '../types';
+import { formatMoney } from '../utils/formatters';
 
 type DeleteTransactionModalProps = {
   visible: boolean;

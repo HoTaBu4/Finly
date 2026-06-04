@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { CategoryFormInput, CategoryFormModal } from '../components/modals/CategoryFormModal';
+import { CategoryFormInput, CategoryFormModal } from '../modals/CategoryFormModal';
 import { useFinanceData } from '../state/FinanceDataContext';
 import { colors } from '../theme/colors';
 import { CategoryItem, TransactionType } from '../types';

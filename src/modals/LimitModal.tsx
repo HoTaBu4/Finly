@@ -8,7 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { colors } from '../../theme/colors';
+import { colors } from '../theme/colors';
 
 type LimitModalProps = {
   visible: boolean;

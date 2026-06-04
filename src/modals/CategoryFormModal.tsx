@@ -10,8 +10,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { colors } from '../../theme/colors';
-import { CategoryIconKey, CategoryItem, TransactionType } from '../../types';
+import { colors } from '../theme/colors';
+import { CategoryIconKey, CategoryItem, TransactionType } from '../types';
 
 export type CategoryFormInput = {
   category: string;
