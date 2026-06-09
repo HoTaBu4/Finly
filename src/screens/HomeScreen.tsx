@@ -23,7 +23,7 @@ import {
 
 export function HomeScreen() {
   const router = useRouter();
-  const { categories, setCategories, historyItems, setHistoryItems } = useFinanceData();
+  const { categories, addCategory, updateCategory, deleteCategory, historyItems, addTransaction, updateTransaction, deleteTransaction } = useFinanceData();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
@@ -97,13 +97,7 @@ export function HomeScreen() {
       return;
     }
 
-    setCategories((previous) =>
-      previous.map((item) =>
-        item.id === selectedCategory.id
-          ? { ...item, limit }
-          : item
-      )
-    );
+    updateCategory({ ...selectedCategory, limit, updatedAt: new Date().toISOString() });
     setLimitModalVisibility(false);
   }
 
@@ -167,34 +161,24 @@ export function HomeScreen() {
   }
 
   function saveAddedTransaction(newTransaction: AddTransactionInput) {
-    setHistoryItems((previous) => [
-      {
-        id: `${Date.now()}`,
-        amount: Math.abs(newTransaction.amount),
-        type: newTransaction.type,
-        categoryId: newTransaction.categoryId,
-        date: new Date().toISOString(),
-      },
-      ...previous,
-    ]);
+    addTransaction({
+      id: `${Date.now()}`,
+      amount: Math.abs(newTransaction.amount),
+      type: newTransaction.type,
+      categoryId: newTransaction.categoryId,
+      date: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
     closeAddTransactionModal();
   }
 
   function saveEditedTransaction(updatedTransaction: HistoryTransaction) {
-    setHistoryItems((previous) =>
-      previous.map((item) =>
-        item.id === updatedTransaction.id
-          ? updatedTransaction
-          : item
-      )
-    );
+    updateTransaction({ ...updatedTransaction, updatedAt: new Date().toISOString() });
     closeEditTransactionModal();
   }
 
   function confirmDeleteTransaction(transaction: HistoryTransaction) {
-    setHistoryItems((previous) =>
-      previous.filter((item) => item.id !== transaction.id)
-    );
+    deleteTransaction(transaction.id);
     closeDeleteTransactionModal();
   }
 

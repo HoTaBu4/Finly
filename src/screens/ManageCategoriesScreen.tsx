@@ -14,7 +14,7 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
 
 export function ManageCategoriesScreen() {
   const router = useRouter();
-  const { categories, setCategories, historyItems } = useFinanceData();
+  const { categories, addCategory, updateCategory, deleteCategory: removeCategory, historyItems } = useFinanceData();
   const [isFormOpen, setFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
 
@@ -63,29 +63,22 @@ export function ManageCategoriesScreen() {
     }
 
     if (editingCategory) {
-      setCategories((previous) =>
-        previous.map((item) =>
-          item.id === editingCategory.id
-            ? {
-              ...item,
-              category: input.category,
-              type: input.type,
-              icon: input.icon,
-            }
-            : item
-        )
-      );
+      updateCategory({
+        ...editingCategory,
+        category: input.category,
+        type: input.type,
+        icon: input.icon,
+        updatedAt: new Date().toISOString(),
+      });
     } else {
-      setCategories((previous) => [
-        ...previous,
-        {
-          id: `${Date.now()}`,
-          category: input.category,
-          type: input.type,
-          limit: null,
-          icon: input.icon,
-        },
-      ]);
+      addCategory({
+        id: `${Date.now()}`,
+        category: input.category,
+        type: input.type,
+        limit: null,
+        icon: input.icon,
+        updatedAt: new Date().toISOString(),
+      });
     }
 
     closeForm();
@@ -110,7 +103,7 @@ export function ManageCategoriesScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            setCategories((previous) => previous.filter((item) => item.id !== category.id));
+            removeCategory(category.id);
           },
         },
       ]

@@ -20,6 +20,7 @@ export type HistoryTransaction = {
   type: TransactionType;
   categoryId: string;
   date: string;
+  updatedAt: string; // ISO timestamp — для sync conflict resolution
 };
 
 
@@ -86,6 +87,7 @@ export type CategoryItem = {
   type: TransactionType;
   limit: number | null;
   icon: CategoryIconKey;
+  updatedAt: string; // ISO timestamp — для sync conflict resolution
 };
 
 export type CategoryChartItem = CategoryItem & {

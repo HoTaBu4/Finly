@@ -1,32 +1,69 @@
-import { SetStateAction } from 'react';
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { HISTORY_ITEMS, INITIAL_CATEGORIES } from '../screens/HomeScreen.constants';
 import { CategoryItem, HistoryTransaction } from '../types';
+import { mmkvStorage } from './mmkv';
 
 type FinanceDataState = {
   categories: CategoryItem[];
-  setCategories: (value: SetStateAction<CategoryItem[]>) => void;
+  addCategory: (category: CategoryItem) => void;
+  updateCategory: (updated: CategoryItem) => void;
+  deleteCategory: (id: string) => void;
+
   historyItems: HistoryTransaction[];
-  setHistoryItems: (value: SetStateAction<HistoryTransaction[]>) => void;
+  addTransaction: (transaction: HistoryTransaction) => void;
+  updateTransaction: (updated: HistoryTransaction) => void;
+  deleteTransaction: (id: string) => void;
 };
 
-function resolveStateValue<T>(current: T, value: SetStateAction<T>) {
-  if (typeof value === 'function') {
-    return (value as (previous: T) => T)(current);
-  }
+export const useFinanceData = create<FinanceDataState>()(
+  persist(
+    (set) => ({
+      categories: INITIAL_CATEGORIES,
 
-  return value;
-}
+      addCategory: (category) =>
+        set((state) => ({
+          categories: [...state.categories, category],
+        })),
 
-export const useFinanceData = create<FinanceDataState>((set) => ({
-  categories: INITIAL_CATEGORIES,
-  setCategories: (value) =>
-    set((state) => ({
-      categories: resolveStateValue(state.categories, value),
-    })),
-  historyItems: HISTORY_ITEMS,
-  setHistoryItems: (value) =>
-    set((state) => ({
-      historyItems: resolveStateValue(state.historyItems, value),
-    })),
-}));
+      updateCategory: (updated) =>
+        set((state) => ({
+          categories: state.categories.map((item) =>
+            item.id === updated.id ? updated : item
+          ),
+        })),
+
+      deleteCategory: (id) =>
+        set((state) => ({
+          categories: state.categories.filter((item) => item.id !== id),
+        })),
+
+      historyItems: HISTORY_ITEMS,
+
+      addTransaction: (transaction) =>
+        set((state) => ({
+          historyItems: [transaction, ...state.historyItems],
+        })),
+
+      updateTransaction: (updated) =>
+        set((state) => ({
+          historyItems: state.historyItems.map((item) =>
+            item.id === updated.id ? updated : item
+          ),
+        })),
+
+      deleteTransaction: (id) =>
+        set((state) => ({
+          historyItems: state.historyItems.filter((item) => item.id !== id),
+        })),
+    }),
+    {
+      name: 'finance-data',
+      storage: createJSONStorage(() => mmkvStorage),
+      partialize: (state) => ({
+        categories: state.categories,
+        historyItems: state.historyItems,
+      }),
+    }
+  )
+);
