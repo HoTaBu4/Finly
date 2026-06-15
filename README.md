@@ -43,11 +43,137 @@ Freemium з чітким поділом на безкоштовний і пре�
 | Шар | Технологія |
 |-----|-----------|
 | Мобільний фреймворк | React Native + Expo (expo-router) |
-| Стейт менеджмент | Zustand |
-| Локальне сховище (free + premium офлайн кеш) | MMKV |
+| Стейт менеджмент | Zustand (persist middleware) |
+| Локальне сховище | MMKV (react-native-mmkv v4) |
+| Платежі | RevenueCat (react-native-purchases) |
 | Бекенд / Auth (тільки premium) | Supabase (PostgreSQL + Auth + Realtime) |
-| Голосовий ввід (premium) | Whisper API |
-| Платежі | RevenueCat (App Store + Google Play) або Stripe |
+| Голосовий ввід (premium) | TBD (on-device або Whisper API) |
+
+---
+
+## Зовнішні сервіси
+
+| Сервіс | Для чого | Коли потрібен |
+|--------|----------|---------------|
+| **RevenueCat** | Підписки, перевірка premium статусу, Paywall UI | Фаза 4 |
+| **Supabase** | БД, Auth, Realtime sync | Фаза 5 (тільки premium) |
+| **Apple App Store** | In-app purchases (iOS) | Публікація |
+| **Google Play Billing** | In-app purchases (Android) | Публікація |
+
+---
+
+## Архітектура застосунку
+
+```
+┌─────────────────────────────────────────────────────┐
+│                    UI (React Native)                 │
+│  HomeScreen · ManageCategoriesScreen · PaywallModal  │
+└────────────────────────┬────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────┐
+│              State Layer (Zustand + MMKV)            │
+│                                                     │
+│  useFinanceData        usePremium                   │
+│  ├─ categories         ├─ isPremium                 │
+│  ├─ historyItems       ├─ setPremium                │
+│  ├─ addCategory        └─ syncPremiumStatus         │
+│  ├─ updateCategory                                  │
+│  ├─ deleteCategory                                  │
+│  ├─ addTransaction                                  │
+│  ├─ updateTransaction                               │
+│  └─ deleteTransaction                               │
+│                                                     │
+│  persist → MMKV (локальний диск)                    │
+└────────────────────────┬────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────┐
+│              Services Layer                          │
+│                                                     │
+│  revenueCat.ts                                      │
+│  ├─ initRevenueCat() — ініціалізація при старті     │
+│  └─ checkPremiumStatus() — перевірка підписки       │
+│                                                     │
+│  supabaseClient.ts (Фаза 5)                         │
+│  ├─ auth (login, linkAccount)                       │
+│  ├─ categories CRUD                                 │
+│  ├─ transactions CRUD                               │
+│  └─ syncQueue (офлайн черга)                        │
+└────────────────────────┬────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────┐
+│              External Services                       │
+│                                                     │
+│  RevenueCat API ←→ Apple/Google Billing              │
+│  Supabase (PostgreSQL + Auth + Realtime)            │
+└─────────────────────────────────────────────────────┘
+```
+
+### Flow при старті застосунку
+
+```
+1. app/_layout.tsx → initRevenueCat()
+2. Zustand stores → завантажують стейт з MMKV (persist)
+3. usePremium.syncPremiumStatus() → перевіряє RevenueCat (якщо є інтернет)
+4. UI рендериться з локальних даних (моментально)
+```
+
+### Flow покупки Premium
+
+```
+1. Юзер натискає обмежену дію → PaywallModal
+2. Є інтернет → RevenueCat UI Paywall (основний)
+3. Нема інтернету → наша модалка (fallback) з "Підключіть інтернет"
+4. Юзер купує → RevenueCat підтверджує → isPremium = true (кеш локально)
+5. Пропозиція прив'язати акаунт (Google/email) → Supabase Auth
+6. Міграція MMKV → Supabase (одноразово)
+```
+
+### Flow офлайн (premium)
+
+```
+1. Юзер додає транзакцію офлайн
+2. Записується в MMKV + sync queue
+3. Мережа з'явилась → NetInfo listener
+4. Sync queue → відправляє всі операції в Supabase
+5. Pull свіжий стейт з Supabase → оновити MMKV
+6. Конфлікти → updatedAt порівняння (last write wins)
+```
+
+---
+
+## Структура файлів
+
+```
+src/
+├── state/
+│   ├── mmkv.ts                  — MMKV адаптер для Zustand
+│   ├── FinanceDataContext.ts    — основний store (categories, transactions)
+│   └── usePremium.ts            — premium status store
+├── services/
+│   └── revenueCat.ts            — RevenueCat ініціалізація і helpers
+├── modals/
+│   ├── PaywallModal.tsx         — fallback paywall (офлайн)
+│   ├── addTransactionModal.tsx
+│   ├── EditTransactionModal.tsx
+│   ├── DeleteTransactionModal.tsx
+│   ├── CategoryFormModal.tsx
+│   └── LimitModal.tsx
+├── screens/
+│   ├── HomeScreen.tsx
+│   ├── HomeScreen.constants.ts  — initial data (буде видалений в Фазі 5)
+│   └── ManageCategoriesScreen.tsx
+├── components/
+├── types/
+├── theme/
+└── utils/
+
+app/
+├── _layout.tsx                  — root layout, initRevenueCat()
+├── index.tsx                    — main page
+└── manage-categories.tsx
+
+app.config.ts                    — Expo config (читає .env)
+```
 
 ---
 
@@ -173,4 +299,6 @@ transactions (
 
 ## Поточний пріоритет
 
-> **Фаза 2** — підключити MMKV, зберігати дані локально, прибрати хардкод.
+> **Фаза 2** ✅ — MMKV підключений, дані зберігаються локально.
+> **Фаза 3** ✅ — Premium Gate реалізований (usePremium, PaywallModal, ліміти категорій).
+> **Фаза 4** 🔄 — RevenueCat ініціалізований, потрібно встановити `react-native-purchases`.
