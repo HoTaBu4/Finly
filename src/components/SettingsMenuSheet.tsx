@@ -10,6 +10,8 @@ type SettingsMenuSheetProps = {
   onTrackingModeChange: (mode: TrackingMode) => void;
   onManageCategoriesPress: () => void;
   onAccountPress: () => void;
+  onPremiumPress: () => void;
+  isPremium: boolean;
 };
 
 type ToggleOption<T extends string> = {
@@ -29,6 +31,8 @@ export function SettingsMenuSheet({
   onTrackingModeChange,
   onManageCategoriesPress,
   onAccountPress,
+  onPremiumPress,
+  isPremium,
 }: SettingsMenuSheetProps) {
   return (
     <Modal
@@ -71,6 +75,25 @@ export function SettingsMenuSheet({
           </View>
 
           <View style={styles.listWrap}>
+            {!isPremium && (
+              <Pressable style={styles.premiumItem} onPress={onPremiumPress}>
+                <View style={styles.listItemLeft}>
+                  <Ionicons name="diamond" size={18} color="#007AFF" />
+                  <Text style={styles.premiumText}>Get Premium</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={16} color="#007AFF" />
+              </Pressable>
+            )}
+            {isPremium && (
+              <View style={styles.premiumActiveItem}>
+                <View style={styles.listItemLeft}>
+                  <Ionicons name="diamond" size={18} color="#34C759" />
+                  <Text style={styles.premiumActiveText}>Premium Active</Text>
+                </View>
+                <Ionicons name="checkmark-circle" size={18} color="#34C759" />
+              </View>
+            )}
+
             <Pressable style={styles.listItem} onPress={onManageCategoriesPress}>
               <View style={styles.listItemLeft}>
                 <Ionicons name="grid-outline" size={18} color={colors.textPrimary} />
@@ -183,5 +206,35 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: colors.textPrimary,
+  },
+  premiumItem: {
+    minHeight: 46,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    backgroundColor: '#F0F7FF',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.panelBorder,
+  },
+  premiumText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#007AFF',
+  },
+  premiumActiveItem: {
+    minHeight: 46,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    backgroundColor: '#F0FFF4',
+    borderBottomWidth: 1,
+    borderBottomColor: colors.panelBorder,
+  },
+  premiumActiveText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#34C759',
   },
 });

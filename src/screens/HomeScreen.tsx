@@ -6,11 +6,14 @@ import { HistoryByPeriod } from '../components/HistoryByPeriod/HistoryByPeriodRo
 import { DeleteTransactionModal } from '../modals/DeleteTransactionModal';
 import { EditTransactionModal } from '../modals/EditTransactionModal';
 import { LimitModal } from '../modals/LimitModal';
+import { PaywallModal } from '../modals/PaywallModal';
 import { AddTransactionInput, AddTransactionModal } from '../modals/addTransactionModal';
 import { SettingsMenuSheet } from '../components/SettingsMenuSheet';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
 import { useFinanceData } from '../state/FinanceDataContext';
+import { usePremium } from '../state/usePremium';
+import { usePaywall } from '../hooks/usePaywall';
 import { colors } from '../theme/colors';
 import { toTransactionType } from '../utils/transactionFilters';
 import {
@@ -23,7 +26,9 @@ import {
 
 export function HomeScreen() {
   const router = useRouter();
-  const { categories, addCategory, updateCategory, deleteCategory, historyItems, addTransaction, updateTransaction, deleteTransaction } = useFinanceData();
+  const { categories, updateCategory, historyItems, addTransaction, updateTransaction, deleteTransaction } = useFinanceData();
+  const { isPremium } = usePremium();
+  const { isOfflinePaywallVisible, showPaywall, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
@@ -245,6 +250,11 @@ export function HomeScreen() {
         onTrackingModeChange={handleTrackingModeChange}
         onManageCategoriesPress={openManageCategories}
         onAccountPress={openAccountSettings}
+        onPremiumPress={() => {
+          setSettingsMenuOpen(false);
+          showPaywall();
+        }}
+        isPremium={isPremium}
       />
       {transactionToEdit && (
         <EditTransactionModal
@@ -262,9 +272,20 @@ export function HomeScreen() {
         onClose={closeDeleteTransactionModal}
         onConfirm={confirmDeleteTransaction}
       />
+      <PaywallModal
+        visible={isOfflinePaywallVisible}
+        onClose={closeOfflinePaywall}
+        onPurchasePress={handleOfflinePurchaseAttempt}
+      />
       <StickyAddBar
         onAddPress={() => setAddTransactionModalOpen(true)}
-        onMicPress={() => Alert.alert('Voice input', 'Start voice capture')}
+        onMicPress={() => {
+          if (isPremium) {
+            Alert.alert('Voice input', 'Start voice capture');
+          } else {
+            showPaywall();
+          }
+        }}
       />
     </View>
   );

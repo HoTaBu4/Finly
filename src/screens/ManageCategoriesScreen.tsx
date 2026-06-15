@@ -3,7 +3,10 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CategoryFormInput, CategoryFormModal } from '../modals/CategoryFormModal';
+import { PaywallModal } from '../modals/PaywallModal';
 import { useFinanceData } from '../state/FinanceDataContext';
+import { FREE_LIMITS, usePremium } from '../state/usePremium';
+import { usePaywall } from '../hooks/usePaywall';
 import { colors } from '../theme/colors';
 import { CategoryItem, TransactionType } from '../types';
 
@@ -15,6 +18,8 @@ const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
 export function ManageCategoriesScreen() {
   const router = useRouter();
   const { categories, addCategory, updateCategory, deleteCategory: removeCategory, historyItems } = useFinanceData();
+  const { isPremium } = usePremium();
+  const { isOfflinePaywallVisible, showPaywall, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
   const [isFormOpen, setFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
 
@@ -24,6 +29,18 @@ export function ManageCategoriesScreen() {
   );
 
   function openAddForm() {
+    if (!isPremium) {
+      const expenseCount = categories.filter((c) => c.type === TransactionType.Expense).length;
+      const incomeCount = categories.filter((c) => c.type === TransactionType.Income).length;
+      const atLimit =
+        expenseCount >= FREE_LIMITS.maxExpenseCategories &&
+        incomeCount >= FREE_LIMITS.maxIncomeCategories;
+
+      if (atLimit) {
+        showPaywall();
+        return;
+      }
+    }
     setEditingCategory(null);
     setFormOpen(true);
   }
@@ -71,6 +88,20 @@ export function ManageCategoriesScreen() {
         updatedAt: new Date().toISOString(),
       });
     } else {
+      // Перевірка ліміту для конкретного типу
+      if (!isPremium) {
+        const count = categories.filter((c) => c.type === input.type).length;
+        const limit = input.type === TransactionType.Expense
+          ? FREE_LIMITS.maxExpenseCategories
+          : FREE_LIMITS.maxIncomeCategories;
+
+        if (count >= limit) {
+          showPaywall();
+          closeForm();
+          return;
+        }
+      }
+
       addCategory({
         id: `${Date.now()}`,
         category: input.category,
@@ -155,6 +186,11 @@ export function ManageCategoriesScreen() {
         initialCategory={editingCategory}
         onClose={closeForm}
         onSave={saveCategory}
+      />
+      <PaywallModal
+        visible={isOfflinePaywallVisible}
+        onClose={closeOfflinePaywall}
+        onPurchasePress={handleOfflinePurchaseAttempt}
       />
     </View>
   );
