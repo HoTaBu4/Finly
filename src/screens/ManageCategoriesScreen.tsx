@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CategoryFormInput, CategoryFormModal } from '../modals/CategoryFormModal';
+import { ConfirmModal } from '../modals/ConfirmModal';
 import { PaywallModal } from '../modals/PaywallModal';
 import { useFinanceData } from '../state/FinanceDataContext';
 import { FREE_LIMITS, usePremium } from '../state/usePremium';
@@ -22,6 +23,7 @@ export function ManageCategoriesScreen() {
   const { isOfflinePaywallVisible, showPaywall, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
   const [isFormOpen, setFormOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CategoryItem | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<CategoryItem | null>(null);
 
   const sortedCategories = useMemo(
     () => [...categories].sort((first, second) => first.category.localeCompare(second.category)),
@@ -116,29 +118,14 @@ export function ManageCategoriesScreen() {
   }
 
   function deleteCategory(category: CategoryItem) {
-    const isUsedInTransactions = historyItems.some((item) => item.categoryId === category.id);
-    if (isUsedInTransactions) {
-      Alert.alert(
-        'Cannot delete',
-        'This category is used in transactions. Delete transactions first.'
-      );
-      return;
-    }
+    setCategoryToDelete(category);
+  }
 
-    Alert.alert(
-      'Delete category',
-      `Delete "${category.category}"?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            removeCategory(category.id);
-          },
-        },
-      ]
-    );
+  function confirmDeleteCategory() {
+    if (categoryToDelete) {
+      removeCategory(categoryToDelete.id);
+    }
+    setCategoryToDelete(null);
   }
 
   return (
@@ -191,6 +178,25 @@ export function ManageCategoriesScreen() {
         visible={isOfflinePaywallVisible}
         onClose={closeOfflinePaywall}
         onPurchasePress={handleOfflinePurchaseAttempt}
+      />
+      <ConfirmModal
+        visible={Boolean(categoryToDelete)}
+        title="Delete category"
+        message={
+          categoryToDelete
+            ? (() => {
+                const count = historyItems.filter((t) => t.categoryId === categoryToDelete.id).length;
+                return count > 0
+                  ? `Delete "${categoryToDelete.category}" and ${count} transaction${count > 1 ? 's' : ''}?`
+                  : `Delete "${categoryToDelete.category}"?`;
+              })()
+            : undefined
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        destructive
+        onConfirm={confirmDeleteCategory}
+        onCancel={() => setCategoryToDelete(null)}
       />
     </View>
   );

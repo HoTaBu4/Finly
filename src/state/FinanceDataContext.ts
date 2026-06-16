@@ -36,6 +36,7 @@ export const useFinanceData = create<FinanceDataState>()(
       deleteCategory: (id) =>
         set((state) => ({
           categories: state.categories.filter((item) => item.id !== id),
+          historyItems: state.historyItems.filter((item) => item.categoryId !== id),
         })),
 
       historyItems: HISTORY_ITEMS,
