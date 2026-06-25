@@ -1,8 +1,10 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { CategoryBarChart } from '../components/CategoryBarChart/CategoryBarChart';
 import { HistoryByPeriod } from '../components/HistoryByPeriod/HistoryByPeriodRow';
+import { DateRangePickerModal } from '../modals/DateRangePickerModal';
 import { DeleteTransactionModal } from '../modals/DeleteTransactionModal';
 import { EditTransactionModal } from '../modals/EditTransactionModal';
 import { LimitModal } from '../modals/LimitModal';
@@ -15,6 +17,11 @@ import { useFinanceData } from '../state/FinanceDataContext';
 import { usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
 import { colors } from '../theme/colors';
+import {
+  formatDateRangeLabel,
+  getThisMonthRange,
+  isDateInRange,
+} from '../utils/dateRanges';
 import { toTransactionType } from '../utils/transactionFilters';
 import {
   CategoryChartItem,
@@ -32,6 +39,8 @@ export function HomeScreen() {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
+  const [isDateRangePickerOpen, setDateRangePickerOpen] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState(() => getThisMonthRange());
   const [isSettingsMenuOpen, setSettingsMenuOpen] = useState(false);
   const [trackingMode, setTrackingMode] = useState<TrackingMode>(TrackingMode.ExpensesOnly);
   const [transactionFilter, setTransactionFilter] =
@@ -51,11 +60,46 @@ export function HomeScreen() {
       ),
     [categories, effectiveTransactionType]
   );
+  const dateRangeLabel = useMemo(
+    () => formatDateRangeLabel(selectedDateRange),
+    [selectedDateRange]
+  );
+  const transactionDates = useMemo(
+    () => historyItems.map((transaction) => transaction.date),
+    [historyItems]
+  );
+  const filteredHistoryItems = useMemo(
+    () => historyItems.filter((transaction) => isDateInRange(transaction.date, selectedDateRange)),
+    [historyItems, selectedDateRange]
+  );
+  const periodTotals = useMemo(
+    () =>
+      filteredHistoryItems.reduce(
+        (totals, transaction) => {
+          const amount = Math.abs(transaction.amount);
+
+          if (transaction.type === TransactionType.Income) {
+            return {
+              ...totals,
+              income: totals.income + amount,
+            };
+          }
+
+          return {
+            ...totals,
+            expense: totals.expense + amount,
+          };
+        },
+        { income: 0, expense: 0 }
+      ),
+    [filteredHistoryItems]
+  );
+  const balanceAmount = periodTotals.income - periodTotals.expense;
 
   const chartItems = useMemo<CategoryChartItem[]>(
     () =>
       visibleCategories.map((category) => {
-        const amount = historyItems.reduce((sum, transaction) => {
+        const amount = filteredHistoryItems.reduce((sum, transaction) => {
           const isSameCategory = transaction.categoryId === category.id;
           const isSameType = transaction.type === category.type;
           return isSameCategory && isSameType
@@ -68,7 +112,7 @@ export function HomeScreen() {
           amount,
         };
       }),
-    [historyItems, visibleCategories]
+    [filteredHistoryItems, visibleCategories]
   );
 
   const selectedCategory =
@@ -200,7 +244,22 @@ export function HomeScreen() {
           onAllPress={handleAllPress}
           activeFilter={effectiveFilter}
           trackingMode={trackingMode}
+          balanceAmount={balanceAmount}
+          expenseAmount={periodTotals.expense}
+          incomeAmount={periodTotals.income}
         />
+        <View style={styles.periodFilterWrapper}>
+          <Pressable
+            style={styles.periodFilterButton}
+            onPress={() => setDateRangePickerOpen(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Choose data period"
+          >
+            <Ionicons name="calendar-outline" size={16} color={colors.accentPrimary} />
+            <Text style={styles.periodFilterText}>{dateRangeLabel}</Text>
+            <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
+          </Pressable>
+        </View>
         <View style={styles.chartSection}>
           <CategoryBarChart
             items={chartItems}
@@ -209,7 +268,7 @@ export function HomeScreen() {
           />
         </View>
         <HistoryByPeriod
-          transactions={historyItems}
+          transactions={filteredHistoryItems}
           categories={categories}
           title="History"
           transactionTypeFilter={effectiveFilter}
@@ -272,6 +331,16 @@ export function HomeScreen() {
         onClose={closeDeleteTransactionModal}
         onConfirm={confirmDeleteTransaction}
       />
+      <DateRangePickerModal
+        visible={isDateRangePickerOpen}
+        selectedRange={selectedDateRange}
+        transactionDates={transactionDates}
+        onClose={() => setDateRangePickerOpen(false)}
+        onApply={(range) => {
+          setSelectedDateRange(range);
+          setDateRangePickerOpen(false);
+        }}
+      />
       <PaywallModal
         visible={isOfflinePaywallVisible}
         onClose={closeOfflinePaywall}
@@ -300,8 +369,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingBottom: 120,
   },
+  periodFilterWrapper: {
+    paddingHorizontal: 18,
+    marginTop: -2,
+  },
+  periodFilterButton: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    borderColor: colors.panelBorder,
+    backgroundColor: colors.cardBackground,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  periodFilterText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
   chartSection: {
     paddingHorizontal: 18,
-    paddingTop: 8,
+    paddingTop: 0,
   },
 });

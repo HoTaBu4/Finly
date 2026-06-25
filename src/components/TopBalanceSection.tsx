@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import { HistoryTransactionFilter, TrackingMode } from '../types';
+import { formatMoney } from '../utils/formatters';
 import { StatCard } from './StatCard';
 
 type TopBalanceSectionProps = {
@@ -11,6 +12,9 @@ type TopBalanceSectionProps = {
   onAllPress?: () => void;
   activeFilter?: HistoryTransactionFilter;
   trackingMode?: TrackingMode;
+  balanceAmount?: number;
+  expenseAmount?: number;
+  incomeAmount?: number;
 };
 
 export function TopBalanceSection({
@@ -20,11 +24,20 @@ export function TopBalanceSection({
   onAllPress,
   activeFilter = HistoryTransactionFilter.Expense,
   trackingMode = TrackingMode.ExpensesOnly,
+  balanceAmount = 0,
+  expenseAmount = 0,
+  incomeAmount = 0,
 }: TopBalanceSectionProps) {
   const isBothMode = trackingMode === TrackingMode.Both;
   const isExpenseActive = activeFilter === HistoryTransactionFilter.Expense;
   const isIncomeActive = activeFilter === HistoryTransactionFilter.Income;
   const isAllActive = activeFilter === HistoryTransactionFilter.All;
+  const balanceLabel =
+    balanceAmount < 0
+      ? `-${formatMoney(Math.abs(balanceAmount))}`
+      : formatMoney(balanceAmount);
+  const expenseLabel = expenseAmount === 0 ? formatMoney(0) : `-${formatMoney(expenseAmount)}`;
+  const incomeLabel = formatMoney(incomeAmount);
 
   return (
     <View style={styles.panel}>
@@ -41,7 +54,7 @@ export function TopBalanceSection({
       </View>
 
       <View style={styles.balanceRow}>
-        <Text style={styles.balance}>140 000 $</Text>
+        <Text style={styles.balance}>{balanceLabel}</Text>
         <View style={styles.balanceActions}>
           <View style={styles.plusButton}>
             <Text style={styles.plusText}>+</Text>
@@ -61,7 +74,7 @@ export function TopBalanceSection({
             >
               <StatCard
                 isBackground
-                value="-100 $"
+                value={expenseLabel}
                 direction="down"
                 accent={colors.orange}
                 containerStyle={[styles.statCard, styles.expenseCard]}
@@ -76,7 +89,7 @@ export function TopBalanceSection({
               accessibilityState={{ selected: isIncomeActive }}
             >
               <StatCard
-                value="240 $"
+                value={incomeLabel}
                 direction="up"
                 accent={colors.green}
                 containerStyle={styles.statCard}
@@ -96,7 +109,7 @@ export function TopBalanceSection({
         ) : (
           <StatCard
             isBackground
-            value="-100 $"
+            value={expenseLabel}
             direction="down"
             accent={colors.orange}
             containerStyle={[styles.statCard, styles.expenseCard]}
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     paddingHorizontal: 18,
     paddingTop: 12,
-    paddingBottom: 18,
+    paddingBottom: 8,
   },
   labelRow: {
     flexDirection: 'row',
@@ -170,7 +183,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignSelf: 'flex-start',
-    marginBottom: 14,
+    marginBottom: 4,
   },
   statCard: {
     minWidth: 0,
