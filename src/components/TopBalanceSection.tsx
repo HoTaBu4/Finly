@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { HistoryTransactionFilter, TrackingMode } from '../types';
 import { formatMoney } from '../utils/formatters';
 import { StatCard } from './StatCard';
@@ -42,12 +43,12 @@ export function TopBalanceSection({
   return (
     <View style={styles.panel}>
       <View style={styles.labelRow}>
-        <Text style={styles.label}>Balance</Text>
+        <Text style={styles.label}>{translations.topBalance.balance}</Text>
         <Pressable
           style={styles.settingsButton}
           onPress={onSettingsPress}
           accessibilityRole="button"
-          accessibilityLabel="Open settings"
+          accessibilityLabel={translations.topBalance.openSettings}
         >
           <Ionicons name="settings-outline" size={18} color={colors.textPrimary} />
         </Pressable>
@@ -69,7 +70,7 @@ export function TopBalanceSection({
               style={[styles.filterButton, isExpenseActive && styles.filterButtonActive]}
               onPress={onExpensePress}
               accessibilityRole="button"
-              accessibilityLabel="Show expenses"
+              accessibilityLabel={translations.topBalance.showExpenses}
               accessibilityState={{ selected: isExpenseActive }}
             >
               <StatCard
@@ -85,7 +86,7 @@ export function TopBalanceSection({
               style={[styles.filterButton, isIncomeActive && styles.filterButtonActive]}
               onPress={onIncomePress}
               accessibilityRole="button"
-              accessibilityLabel="Show income"
+              accessibilityLabel={translations.topBalance.showIncome}
               accessibilityState={{ selected: isIncomeActive }}
             >
               <StatCard
@@ -100,10 +101,10 @@ export function TopBalanceSection({
               style={[styles.allButton, styles.filterButton, isAllActive && styles.filterButtonActive]}
               onPress={onAllPress}
               accessibilityRole="button"
-              accessibilityLabel="Show all transactions"
+              accessibilityLabel={translations.topBalance.showAllTransactions}
               accessibilityState={{ selected: isAllActive }}
             >
-              <Text style={styles.allButtonText}>All</Text>
+              <Text style={styles.allButtonText}>{translations.common.all}</Text>
             </Pressable>
           </>
         ) : (

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { CategorySelectDropdown } from '../components/CategorySelectDropdown';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryItem, HistoryTransaction, TransactionType } from '../types';
 
 type EditTransactionModalProps = {
@@ -47,13 +48,19 @@ export function EditTransactionModal({
 
   function handleSave() {
     if (!selectedCategory) {
-      Alert.alert('Invalid category', 'Please select a category.');
+      Alert.alert(
+        translations.transactionForm.invalidCategory.title,
+        translations.transactionForm.invalidCategory.message
+      );
       return;
     }
 
     const parsedAmount = Number(amountInput.trim());
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
-      Alert.alert('Invalid amount', 'Enter a valid amount greater than 0.');
+      Alert.alert(
+        translations.transactionForm.invalidAmount.title,
+        translations.transactionForm.invalidAmount.message
+      );
       return;
     }
 
@@ -82,36 +89,38 @@ export function EditTransactionModal({
               <Ionicons name="create-outline" size={16} color={colors.accentPrimary} />
             </View>
             <View style={styles.headerTextWrap}>
-              <Text style={styles.modalTitle}>Edit transaction</Text>
+              <Text style={styles.modalTitle}>{translations.transactionForm.editTitle}</Text>
               <Text style={styles.modalSubtitle}>
-                {selectedType === TransactionType.Expense ? 'Expense' : 'Income'}
+                {selectedType === TransactionType.Expense
+                  ? translations.common.expense
+                  : translations.common.income}
               </Text>
             </View>
           </View>
 
-          <Text style={styles.fieldLabel}>Category</Text>
+          <Text style={styles.fieldLabel}>{translations.common.category}</Text>
           <CategorySelectDropdown
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onCategoryChange={(category) => setSelectedCategoryId(category.id)}
           />
 
-          <Text style={styles.fieldLabel}>Amount</Text>
+          <Text style={styles.fieldLabel}>{translations.common.amount}</Text>
           <TextInput
             style={styles.modalInput}
             value={amountInput}
             onChangeText={setAmountInput}
-            placeholder="Amount"
+            placeholder={translations.common.amount}
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
           />
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
             </Pressable>
             <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>Save</Text>
+              <Text style={styles.modalSaveText}>{translations.common.save}</Text>
             </Pressable>
           </View>
         </Pressable>

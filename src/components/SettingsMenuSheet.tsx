@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { TrackingMode } from '../types';
 
 type SettingsMenuSheetProps = {
@@ -20,8 +21,8 @@ type ToggleOption<T extends string> = {
 };
 
 const TRACKING_OPTIONS: ToggleOption<TrackingMode>[] = [
-  { value: TrackingMode.ExpensesOnly, label: 'Expenses only' },
-  { value: TrackingMode.Both, label: 'Expenses + Income' },
+  { value: TrackingMode.ExpensesOnly, label: translations.settings.expensesOnly },
+  { value: TrackingMode.Both, label: translations.settings.expensesAndIncome },
 ];
 
 export function SettingsMenuSheet({
@@ -47,10 +48,10 @@ export function SettingsMenuSheet({
           onPress={(event) => event.stopPropagation()}
         >
           <View style={styles.grabber} />
-          <Text style={styles.title}>Settings</Text>
+          <Text style={styles.title}>{translations.settings.title}</Text>
 
           <View style={styles.section}>
-            <Text style={styles.label}>Tracking mode</Text>
+            <Text style={styles.label}>{translations.settings.trackingMode}</Text>
             <View style={styles.toggleRow}>
               {TRACKING_OPTIONS.map((option) => {
                 const isActive = option.value === trackingMode;
@@ -60,7 +61,7 @@ export function SettingsMenuSheet({
                     style={[styles.toggleButton, isActive && styles.toggleButtonActive]}
                     onPress={() => onTrackingModeChange(option.value)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Tracking mode: ${option.label}`}
+                    accessibilityLabel={translations.settings.trackingModeAccessibility(option.label)}
                     accessibilityState={{ selected: isActive }}
                   >
                     <Text
@@ -79,7 +80,7 @@ export function SettingsMenuSheet({
               <Pressable style={styles.premiumItem} onPress={onPremiumPress}>
                 <View style={styles.listItemLeft}>
                   <Ionicons name="diamond" size={18} color="#007AFF" />
-                  <Text style={styles.premiumText}>Get Premium</Text>
+                  <Text style={styles.premiumText}>{translations.settings.getPremium}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color="#007AFF" />
               </Pressable>
@@ -88,7 +89,7 @@ export function SettingsMenuSheet({
               <View style={styles.premiumActiveItem}>
                 <View style={styles.listItemLeft}>
                   <Ionicons name="diamond" size={18} color="#34C759" />
-                  <Text style={styles.premiumActiveText}>Premium Active</Text>
+                  <Text style={styles.premiumActiveText}>{translations.settings.premiumActive}</Text>
                 </View>
                 <Ionicons name="checkmark-circle" size={18} color="#34C759" />
               </View>
@@ -97,7 +98,7 @@ export function SettingsMenuSheet({
             <Pressable style={styles.listItem} onPress={onManageCategoriesPress}>
               <View style={styles.listItemLeft}>
                 <Ionicons name="grid-outline" size={18} color={colors.textPrimary} />
-                <Text style={styles.listText}>Manage categories</Text>
+                <Text style={styles.listText}>{translations.settings.manageCategories}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
             </Pressable>
@@ -105,7 +106,7 @@ export function SettingsMenuSheet({
             <Pressable style={styles.listItem} onPress={onAccountPress}>
               <View style={styles.listItemLeft}>
                 <Ionicons name="person-outline" size={18} color={colors.textPrimary} />
-                <Text style={styles.listText}>Account settings</Text>
+                <Text style={styles.listText}>{translations.settings.accountSettings}</Text>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
             </Pressable>

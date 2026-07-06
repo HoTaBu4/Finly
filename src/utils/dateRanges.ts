@@ -1,3 +1,5 @@
+import { translations } from '../translations';
+
 export type MonthWeekPreset = 'week_1' | 'week_2' | 'week_3' | 'week_4';
 
 export type DateRangePreset = 'this_month' | 'this_year' | MonthWeekPreset | 'custom';
@@ -98,29 +100,29 @@ export function isSameCalendarDay(first: Date, second: Date) {
   );
 }
 
-export function formatDateRangeLabel(range: DateRange, locale = 'en-US') {
+export function formatDateRangeLabel(range: DateRange, locale = translations.formatting.locale) {
   if (range.preset === 'this_month') {
-    return 'This month';
+    return translations.dateRange.thisMonth;
   }
 
   if (range.preset === 'this_year') {
-    return 'This year';
+    return translations.dateRange.thisYear;
   }
 
   if (range.preset === 'week_1') {
-    return 'Week 1';
+    return translations.dateRange.week('1');
   }
 
   if (range.preset === 'week_2') {
-    return 'Week 2';
+    return translations.dateRange.week('2');
   }
 
   if (range.preset === 'week_3') {
-    return 'Week 3';
+    return translations.dateRange.week('3');
   }
 
   if (range.preset === 'week_4') {
-    return 'Week 4';
+    return translations.dateRange.week('4');
   }
 
   const formatter = new Intl.DateTimeFormat(locale, {

@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryItem, HistoryTransaction } from '../types';
 import { formatMoney } from '../utils/formatters';
 
@@ -20,8 +21,8 @@ export function DeleteTransactionModal({
   onConfirm,
 }: DeleteTransactionModalProps) {
   const transactionCategoryName = transaction
-    ? categories.find((item) => item.id === transaction.categoryId)?.category ?? 'Unknown'
-    : 'Unknown';
+    ? categories.find((item) => item.id === transaction.categoryId)?.category ?? translations.common.unknown
+    : translations.common.unknown;
 
   function handleConfirm() {
     if (!transaction) {
@@ -48,15 +49,15 @@ export function DeleteTransactionModal({
               <Ionicons name="warning-outline" size={16} color={colors.orange} />
             </View>
             <View style={styles.headerTextWrap}>
-              <Text style={styles.modalTitle}>Delete transaction</Text>
-              <Text style={styles.modalSubtitle}>This action cannot be undone.</Text>
+              <Text style={styles.modalTitle}>{translations.deleteTransaction.title}</Text>
+              <Text style={styles.modalSubtitle}>{translations.deleteTransaction.subtitle}</Text>
             </View>
           </View>
 
           <View style={styles.summaryCard}>
-            <Text style={styles.summaryLabel}>Category</Text>
+            <Text style={styles.summaryLabel}>{translations.common.category}</Text>
             <Text style={styles.summaryValue}>{transactionCategoryName}</Text>
-            <Text style={styles.summaryLabel}>Amount</Text>
+            <Text style={styles.summaryLabel}>{translations.common.amount}</Text>
             <Text style={styles.summaryValue}>
               {transaction ? formatMoney(Math.abs(transaction.amount)) : '-'}
             </Text>
@@ -64,10 +65,10 @@ export function DeleteTransactionModal({
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
             </Pressable>
             <Pressable style={styles.modalDeleteButton} onPress={handleConfirm}>
-              <Text style={styles.modalDeleteText}>Delete</Text>
+              <Text style={styles.modalDeleteText}>{translations.common.delete}</Text>
             </Pressable>
           </View>
         </Pressable>

@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 
 type PlanOption = 'yearly' | 'monthly';
 
@@ -15,20 +16,20 @@ const FEATURES = [
   {
     icon: 'lock-closed' as const,
     color: '#34C759',
-    title: 'Category limit',
-    description: 'Remove limits on categories.',
+    title: translations.paywall.features.categoryLimit.title,
+    description: translations.paywall.features.categoryLimit.description,
   },
   {
     icon: 'notifications' as const,
     color: '#FF9500',
-    title: 'Voice input',
-    description: 'Just dictate your type of expense and it will be added automatically',
+    title: translations.paywall.features.voiceInput.title,
+    description: translations.paywall.features.voiceInput.description,
   },
   {
     icon: 'star' as const,
     color: '#007AFF',
-    title: 'Track of expenses',
-    description: 'You can track your expenses through Apple Pay or Google Pay',
+    title: translations.paywall.features.expenseTracking.title,
+    description: translations.paywall.features.expenseTracking.description,
   },
 ];
 
@@ -56,7 +57,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
           </View>
         </View>
 
-        <Text style={styles.title}>Get premium</Text>
+        <Text style={styles.title}>{translations.paywall.title}</Text>
 
         <View style={styles.featureList}>
           <View style={styles.featureBar} />
@@ -81,10 +82,10 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
             onPress={() => setSelectedPlan('yearly')}
           >
             <View style={styles.planBadge}>
-              <Text style={styles.planBadgeText}>19% OFF</Text>
+              <Text style={styles.planBadgeText}>{translations.paywall.plans.yearly.badge}</Text>
             </View>
             <View style={styles.planHeader}>
-              <Text style={styles.planName}>Yearly</Text>
+              <Text style={styles.planName}>{translations.paywall.plans.yearly.name}</Text>
               {selectedPlan === 'yearly' && (
                 <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
               )}
@@ -92,8 +93,8 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
                 <Ionicons name="ellipse-outline" size={22} color={colors.textSecondary} />
               )}
             </View>
-            <Text style={styles.planPrice}>$79.99/yr</Text>
-            <Text style={styles.planSubtext}>Only $6.66/mo</Text>
+            <Text style={styles.planPrice}>{translations.paywall.plans.yearly.price}</Text>
+            <Text style={styles.planSubtext}>{translations.paywall.plans.yearly.subtext}</Text>
           </Pressable>
 
           <Pressable
@@ -101,7 +102,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
             onPress={() => setSelectedPlan('monthly')}
           >
             <View style={styles.planHeader}>
-              <Text style={styles.planName}>Monthly</Text>
+              <Text style={styles.planName}>{translations.paywall.plans.monthly.name}</Text>
               {selectedPlan === 'monthly' && (
                 <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
               )}
@@ -109,24 +110,24 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
                 <Ionicons name="ellipse-outline" size={22} color={colors.textSecondary} />
               )}
             </View>
-            <Text style={styles.planPrice}>$9.99/mo</Text>
-            <Text style={styles.planSubtext}>Billed at $9.99/mo.</Text>
+            <Text style={styles.planPrice}>{translations.paywall.plans.monthly.price}</Text>
+            <Text style={styles.planSubtext}>{translations.paywall.plans.monthly.subtext}</Text>
           </Pressable>
         </View>
 
         <Pressable style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.continueButtonText}>Continue</Text>
+          <Text style={styles.continueButtonText}>{translations.paywall.continue}</Text>
         </Pressable>
 
         <View style={styles.footer}>
           <Pressable onPress={handleRestore}>
-            <Text style={styles.footerLink}>Restore Purchases</Text>
+            <Text style={styles.footerLink}>{translations.paywall.restorePurchases}</Text>
           </Pressable>
           <Pressable>
-            <Text style={styles.footerLink}>Terms</Text>
+            <Text style={styles.footerLink}>{translations.paywall.terms}</Text>
           </Pressable>
           <Pressable>
-            <Text style={styles.footerLink}>Privacy</Text>
+            <Text style={styles.footerLink}>{translations.paywall.privacy}</Text>
           </Pressable>
         </View>
       </View>

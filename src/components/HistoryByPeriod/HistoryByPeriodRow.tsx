@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
+import { translations } from '../../translations';
 import { formatMonth } from '../../utils/formatters';
 import { toTransactionType } from '../../utils/transactionFilters';
 import {
@@ -42,7 +43,7 @@ function sortByDateDesc(items: HistoryTransaction[]) {
 export function HistoryByPeriod({
   transactions,
   categories,
-  title = 'History',
+  title = translations.history.title,
   transactionTypeFilter = HistoryTransactionFilter.Expense,
   categoryIdFilter = null,
   selectedCategory = null,
@@ -51,14 +52,14 @@ export function HistoryByPeriod({
   onTransactionDelete,
 }: HistoryByPeriodProps) {
   const historyTitle = selectedCategory
-    ? `History: ${selectedCategory.category}`
+    ? translations.history.categoryTitle(selectedCategory.category)
     : title;
   const canEditLimit = selectedCategory?.type === TransactionType.Expense;
   const historyActionLabel =
     selectedCategory && canEditLimit
       ? selectedCategory.limit != null
-        ? 'Edit limit'
-        : 'Add limit'
+        ? translations.history.editLimit
+        : translations.history.addLimit
       : undefined;
 
   const normalizedCategoryIdFilter = categoryIdFilter?.trim() ?? null;
@@ -158,7 +159,7 @@ export function HistoryByPeriod({
       </View>
 
       {!hasAnyTransactions ? (
-        <Text style={styles.emptyState}>No transactions found</Text>
+        <Text style={styles.emptyState}>{translations.history.empty}</Text>
       ) : (
         sections.map((section) => (
           <View key={section.key} style={styles.sectionCard}>
@@ -176,7 +177,7 @@ export function HistoryByPeriod({
                   key={rowKey}
                   rowKey={rowKey}
                   item={item}
-                  categoryLabel={categoryNamesById.get(item.categoryId) ?? 'Unknown'}
+                  categoryLabel={categoryNamesById.get(item.categoryId) ?? translations.common.unknown}
                   onEdit={onTransactionEdit}
                   onDelete={onTransactionDelete}
                   onOpen={handleRowOpen}

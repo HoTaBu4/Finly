@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryIconKey, CategoryItem, TransactionType } from '../types';
 
 export type CategoryFormInput = {
@@ -83,7 +84,10 @@ export function CategoryFormModal({
 
   function handleSave() {
     if (!categoryName) {
-      Alert.alert('Invalid category', 'Category name cannot be empty.');
+      Alert.alert(
+        translations.categoryForm.invalidCategory.title,
+        translations.categoryForm.invalidCategory.message
+      );
       return;
     }
 
@@ -103,20 +107,20 @@ export function CategoryFormModal({
           onPress={(event) => event.stopPropagation()}
         >
           <Text style={styles.modalTitle}>
-            {isEditing ? 'Edit category' : 'Add category'}
+            {isEditing ? translations.categoryForm.editTitle : translations.categoryForm.addTitle}
           </Text>
 
-          <Text style={styles.fieldLabel}>Name</Text>
+          <Text style={styles.fieldLabel}>{translations.categoryForm.name}</Text>
           <TextInput
             style={styles.modalInput}
             value={nameInput}
             onChangeText={setNameInput}
-            placeholder="Category name"
+            placeholder={translations.categoryForm.namePlaceholder}
             placeholderTextColor={colors.textSecondary}
             autoFocus
           />
 
-          <Text style={styles.fieldLabel}>Type</Text>
+          <Text style={styles.fieldLabel}>{translations.categoryForm.type}</Text>
           <View style={styles.typeRow}>
             <Pressable
               style={[styles.typeButton, type === TransactionType.Expense && styles.typeButtonActive]}
@@ -128,7 +132,7 @@ export function CategoryFormModal({
                   type === TransactionType.Expense && styles.typeButtonTextActive,
                 ]}
               >
-                Expense
+                {translations.common.expense}
               </Text>
             </Pressable>
             <Pressable
@@ -141,12 +145,12 @@ export function CategoryFormModal({
                   type === TransactionType.Income && styles.typeButtonTextActive,
                 ]}
               >
-                Income
+                {translations.common.income}
               </Text>
             </Pressable>
           </View>
 
-          <Text style={styles.fieldLabel}>Icon</Text>
+          <Text style={styles.fieldLabel}>{translations.categoryForm.icon}</Text>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -172,10 +176,12 @@ export function CategoryFormModal({
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
             </Pressable>
             <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>{isEditing ? 'Save' : 'Add'}</Text>
+              <Text style={styles.modalSaveText}>
+                {isEditing ? translations.common.save : translations.common.add}
+              </Text>
             </Pressable>
           </View>
         </Pressable>

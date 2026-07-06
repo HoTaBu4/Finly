@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryItem, TransactionType } from '../types';
 
 type CategorySelectDropdownProps = {
@@ -51,12 +52,12 @@ export function CategorySelectDropdown({
     () => [
       {
         type: TransactionType.Income,
-        title: 'Income categories',
+        title: translations.categorySelect.incomeCategories,
         categories: categories.filter((item) => item.type === TransactionType.Income),
       },
       {
         type: TransactionType.Expense,
-        title: 'Expense categories',
+        title: translations.categorySelect.expenseCategories,
         categories: categories.filter((item) => item.type === TransactionType.Expense),
       },
     ],
@@ -123,7 +124,7 @@ export function CategorySelectDropdown({
               !selectedCategory && styles.dropdownPlaceholderText,
             ]}
           >
-            {selectedCategory?.category ?? 'Select category'}
+            {selectedCategory?.category ?? translations.categorySelect.placeholder}
           </Text>
         </View>
         <Ionicons
@@ -164,7 +165,9 @@ export function CategorySelectDropdown({
               <View key={section.type} style={styles.dropdownSection}>
                 <Text style={styles.dropdownSectionTitle}>{section.title}</Text>
                 {section.categories.length === 0 ? (
-                  <Text style={styles.dropdownSectionEmptyText}>No categories yet</Text>
+                  <Text style={styles.dropdownSectionEmptyText}>
+                    {translations.categorySelect.empty}
+                  </Text>
                 ) : (
                   section.categories.map((category) => {
                     const isSelected = selectedCategory?.id === category.id;

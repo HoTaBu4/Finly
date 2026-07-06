@@ -13,25 +13,9 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 
 type AuthMode = 'signIn' | 'signUp';
-
-const AUTH_MODE_COPY: Record<AuthMode, {
-  title: string;
-  subtitle: string;
-  buttonLabel: string;
-}> = {
-  signIn: {
-    title: 'Welcome back',
-    subtitle: 'Sign in to sync your premium data across devices.',
-    buttonLabel: 'Sign in',
-  },
-  signUp: {
-    title: 'Create account',
-    subtitle: 'Link your premium purchase and protect your Finly data.',
-    buttonLabel: 'Create account',
-  },
-};
 
 export function AuthScreen() {
   const router = useRouter();
@@ -39,7 +23,7 @@ export function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const copy = AUTH_MODE_COPY[mode];
+  const copy = translations.auth[mode];
   const isFormValid = useMemo(
     () => email.trim().includes('@') && password.trim().length >= 6,
     [email, password]
@@ -47,13 +31,16 @@ export function AuthScreen() {
 
   function handleSubmit() {
     if (!isFormValid) {
-      Alert.alert('Check details', 'Enter a valid email and at least 6 characters password.');
+      Alert.alert(
+        translations.auth.validationError.title,
+        translations.auth.validationError.message
+      );
       return;
     }
 
     Alert.alert(
-      'Supabase auth',
-      'This screen is ready. Next step is connecting Supabase sign in and sign up.'
+      translations.auth.pendingSupabase.title,
+      translations.auth.pendingSupabase.message
     );
   }
 
@@ -65,7 +52,7 @@ export function AuthScreen() {
       <View style={styles.header}>
         <Pressable style={styles.headerButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={18} color={colors.textPrimary} />
-          <Text style={styles.headerButtonText}>Back</Text>
+          <Text style={styles.headerButtonText}>{translations.common.back}</Text>
         </Pressable>
       </View>
 
@@ -91,7 +78,7 @@ export function AuthScreen() {
             accessibilityState={{ selected: mode === 'signIn' }}
           >
             <Text style={[styles.modeText, mode === 'signIn' && styles.modeTextActive]}>
-              Sign in
+              {translations.auth.signIn.buttonLabel}
             </Text>
           </Pressable>
           <Pressable
@@ -101,20 +88,20 @@ export function AuthScreen() {
             accessibilityState={{ selected: mode === 'signUp' }}
           >
             <Text style={[styles.modeText, mode === 'signUp' && styles.modeTextActive]}>
-              Create account
+              {translations.auth.signUp.buttonLabel}
             </Text>
           </Pressable>
         </View>
 
         <View style={styles.form}>
           <View style={styles.field}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={styles.label}>{translations.auth.email}</Text>
             <View style={styles.inputWrap}>
               <Ionicons name="mail-outline" size={18} color={colors.textSecondary} />
               <TextInput
                 value={email}
                 onChangeText={setEmail}
-                placeholder="you@example.com"
+                placeholder={translations.auth.emailPlaceholder}
                 placeholderTextColor={colors.textSecondary}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -126,13 +113,13 @@ export function AuthScreen() {
           </View>
 
           <View style={styles.field}>
-            <Text style={styles.label}>Password</Text>
+            <Text style={styles.label}>{translations.auth.password}</Text>
             <View style={styles.inputWrap}>
               <Ionicons name="lock-closed-outline" size={18} color={colors.textSecondary} />
               <TextInput
                 value={password}
                 onChangeText={setPassword}
-                placeholder="Minimum 6 characters"
+                placeholder={translations.auth.passwordPlaceholder}
                 placeholderTextColor={colors.textSecondary}
                 autoCapitalize="none"
                 secureTextEntry
@@ -155,7 +142,7 @@ export function AuthScreen() {
         <View style={styles.note}>
           <Ionicons name="shield-checkmark-outline" size={18} color={colors.green} />
           <Text style={styles.noteText}>
-            Account linking is used only for premium sync and purchase recovery.
+            {translations.auth.note}
           </Text>
         </View>
       </ScrollView>

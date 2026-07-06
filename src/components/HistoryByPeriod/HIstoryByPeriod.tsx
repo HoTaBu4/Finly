@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
+import { translations } from '../../translations';
 import { HistoryTransaction, TransactionType } from '../../types';
 import { formatDate, formatMoney } from '../../utils/formatters';
 
@@ -190,12 +191,14 @@ export function TransactionRow({
       <View style={[styles.rowActions, { width: actionsWidth }]}>
         {onEdit ? (
           <Pressable style={styles.editAction} onPress={handleEditPress}>
-            <Text style={[styles.actionText, styles.editActionText]}>Edit</Text>
+            <Text style={[styles.actionText, styles.editActionText]}>{translations.common.edit}</Text>
           </Pressable>
         ) : null}
         {onDelete ? (
           <Pressable style={styles.deleteAction} onPress={handleDeletePress}>
-            <Text style={[styles.actionText, styles.deleteActionText]}>Delete</Text>
+            <Text style={[styles.actionText, styles.deleteActionText]}>
+              {translations.common.delete}
+            </Text>
           </Pressable>
         ) : null}
       </View>

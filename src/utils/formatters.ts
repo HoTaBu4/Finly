@@ -1,3 +1,5 @@
+import { translations } from '../translations';
+
 type FormatMoneyOptions = {
   locale?: string;
   maximumFractionDigits?: number;
@@ -13,7 +15,7 @@ type FormatDateOptions = {
 export function formatMoney(
   value: number,
   {
-    locale = 'en-US',
+    locale = translations.formatting.locale,
     maximumFractionDigits = 0,
     suffix = ' $',
   }: FormatMoneyOptions = {}
@@ -28,7 +30,7 @@ export function formatMoney(
 export function formatDate(
   value: string | Date,
   {
-    locale = 'en-US',
+    locale = translations.formatting.locale,
     fallback = '',
     formatOptions = {
       day: 'numeric',
@@ -50,7 +52,7 @@ export function formatDate(
 export function formatMonth(
   year: number,
   month: number,
-  locale = 'en-US'
+  locale = translations.formatting.locale
 ) {
   return new Intl.DateTimeFormat(locale, {
     month: 'long',

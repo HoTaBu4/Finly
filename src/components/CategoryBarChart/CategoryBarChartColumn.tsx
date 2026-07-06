@@ -36,18 +36,18 @@ export function CategoryBarChartColumn({
     effectiveLimit !== null
       ? toScaledPercent(effectiveLimit, maxValue, useSqrtScale)
       : null;
-  const amountLabel = formatMoney(item.amount, { locale: 'uk-UA' });
+  const amountLabel = formatMoney(item.amount);
   const overLimitValue =
     effectiveLimit !== null
       ? Math.max(0, item.amount - effectiveLimit)
       : 0;
   const limitLabel =
     effectiveLimit !== null
-      ? formatMoney(effectiveLimit, { locale: 'uk-UA' })
+      ? formatMoney(effectiveLimit)
       : null;
   const overLimitLabel =
     overLimitValue > 0
-      ? `+${formatMoney(overLimitValue, { locale: 'uk-UA' })}`
+      ? `+${formatMoney(overLimitValue)}`
       : null;
 
   return (

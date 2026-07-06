@@ -17,6 +17,7 @@ import { useFinanceData } from '../state/FinanceDataContext';
 import { usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import {
   formatDateRangeLabel,
   getThisMonthRange,
@@ -253,7 +254,7 @@ export function HomeScreen() {
             style={styles.periodFilterButton}
             onPress={() => setDateRangePickerOpen(true)}
             accessibilityRole="button"
-            accessibilityLabel="Choose data period"
+            accessibilityLabel={translations.dateRange.choosePeriod}
           >
             <Ionicons name="calendar-outline" size={16} color={colors.accentPrimary} />
             <Text style={styles.periodFilterText}>{dateRangeLabel}</Text>
@@ -270,7 +271,7 @@ export function HomeScreen() {
         <HistoryByPeriod
           transactions={filteredHistoryItems}
           categories={categories}
-          title="History"
+          title={translations.history.title}
           transactionTypeFilter={effectiveFilter}
           categoryIdFilter={selectedCategory?.id ?? null}
           selectedCategory={selectedCategory}
@@ -350,7 +351,7 @@ export function HomeScreen() {
         onAddPress={() => setAddTransactionModalOpen(true)}
         onMicPress={() => {
           if (isPremium) {
-            Alert.alert('Voice input', 'Start voice capture');
+            Alert.alert(translations.alerts.voiceInput.title, translations.alerts.voiceInput.message);
           } else {
             showPaywall();
           }

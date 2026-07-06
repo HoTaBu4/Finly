@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import {
   createCustomRange,
   DateRange,
@@ -49,7 +50,7 @@ function getMonthDays(viewDate: Date) {
 }
 
 function formatMonthTitle(date: Date) {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(translations.formatting.locale, {
     month: 'long',
     year: 'numeric',
   }).format(date);
@@ -88,7 +89,7 @@ function getQuickRange(preset: Exclude<DateRangePreset, 'custom'>) {
 }
 
 function getWeekLabel(preset: MonthWeekPreset) {
-  return `Week ${preset.replace('week_', '')}`;
+  return translations.dateRange.week(preset.replace('week_', ''));
 }
 
 export function DateRangePickerModal({
@@ -215,8 +216,8 @@ export function DateRangePickerModal({
         >
           <View style={styles.headerRow}>
             <View>
-              <Text style={styles.modalTitle}>Choose period</Text>
-              <Text style={styles.modalSubtitle}>Quick range or custom dates</Text>
+              <Text style={styles.modalTitle}>{translations.dateRange.choosePeriod}</Text>
+              <Text style={styles.modalSubtitle}>{translations.dateRange.quickOrCustom}</Text>
             </View>
             <Pressable style={styles.closeButton} onPress={onClose}>
               <Ionicons name="close" size={20} color={colors.textPrimary} />
@@ -224,14 +225,14 @@ export function DateRangePickerModal({
           </View>
 
           <View style={styles.quickRow}>
-            {renderQuickChip('This month', 'this_month')}
-            {renderQuickChip('This year', 'this_year')}
+            {renderQuickChip(translations.dateRange.thisMonth, 'this_month')}
+            {renderQuickChip(translations.dateRange.thisYear, 'this_year')}
           </View>
 
           {hasAvailableWeeks ? (
             <View style={styles.weeksSection}>
               <View style={styles.weeksHeader}>
-                <Text style={styles.weeksTitle}>Weeks of this month</Text>
+                <Text style={styles.weeksTitle}>{translations.dateRange.weeksOfThisMonth}</Text>
               </View>
               <View style={styles.weekChipsRow}>
                 {availableWeekPresets.map((preset) =>
@@ -242,8 +243,8 @@ export function DateRangePickerModal({
           ) : null}
 
           <View style={styles.customHeader}>
-            <Text style={styles.customTitle}>Custom range</Text>
-            <Text style={styles.customHint}>Tap start and end date</Text>
+            <Text style={styles.customTitle}>{translations.dateRange.customRange}</Text>
+            <Text style={styles.customHint}>{translations.dateRange.customHint}</Text>
           </View>
 
           <View style={styles.monthRow}>
@@ -299,13 +300,13 @@ export function DateRangePickerModal({
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.dateRange.cancel}</Text>
             </Pressable>
             <Pressable
               style={[styles.modalSaveButton, !canApply && styles.modalSaveButtonDisabled]}
               onPress={applyRange}
             >
-              <Text style={styles.modalSaveText}>Apply</Text>
+              <Text style={styles.modalSaveText}>{translations.dateRange.apply}</Text>
             </Pressable>
           </View>
         </Pressable>

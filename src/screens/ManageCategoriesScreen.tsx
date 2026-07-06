@@ -9,11 +9,12 @@ import { useFinanceData } from '../state/FinanceDataContext';
 import { FREE_LIMITS, usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryItem, TransactionType } from '../types';
 
 const TRANSACTION_TYPE_LABEL: Record<TransactionType, string> = {
-  income: 'Income',
-  expense: 'Expense',
+  income: translations.common.income,
+  expense: translations.common.expense,
 };
 
 export function ManageCategoriesScreen() {
@@ -66,7 +67,10 @@ export function ManageCategoriesScreen() {
     );
 
     if (hasDuplicate) {
-      Alert.alert('Category exists', 'Category with this name and type already exists.');
+      Alert.alert(
+        translations.manageCategories.categoryExists.title,
+        translations.manageCategories.categoryExists.message
+      );
       return;
     }
 
@@ -75,8 +79,8 @@ export function ManageCategoriesScreen() {
       : false;
     if (editingCategory && isEditingUsedCategory && editingCategory.type !== input.type) {
       Alert.alert(
-        'Type cannot be changed',
-        'This category is already used in transactions. Create a new category with another type.'
+        translations.manageCategories.typeCannotBeChanged.title,
+        translations.manageCategories.typeCannotBeChanged.message
       );
       return;
     }
@@ -133,12 +137,12 @@ export function ManageCategoriesScreen() {
       <View style={styles.header}>
         <Pressable style={styles.headerButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={18} color={colors.textPrimary} />
-          <Text style={styles.headerButtonText}>Back</Text>
+          <Text style={styles.headerButtonText}>{translations.common.back}</Text>
         </Pressable>
-        <Text style={styles.title}>Manage categories</Text>
+        <Text style={styles.title}>{translations.manageCategories.title}</Text>
         <Pressable style={styles.addButton} onPress={openAddForm}>
           <Ionicons name="add" size={16} color={colors.cardBackground} />
-          <Text style={styles.addButtonText}>Add</Text>
+          <Text style={styles.addButtonText}>{translations.common.add}</Text>
         </Pressable>
       </View>
 
@@ -181,19 +185,19 @@ export function ManageCategoriesScreen() {
       />
       <ConfirmModal
         visible={Boolean(categoryToDelete)}
-        title="Delete category"
+        title={translations.deleteCategory.title}
         message={
           categoryToDelete
             ? (() => {
                 const count = historyItems.filter((t) => t.categoryId === categoryToDelete.id).length;
                 return count > 0
-                  ? `Delete "${categoryToDelete.category}" and ${count} transaction${count > 1 ? 's' : ''}?`
-                  : `Delete "${categoryToDelete.category}"?`;
+                  ? translations.deleteCategory.withTransactions(categoryToDelete.category, count)
+                  : translations.deleteCategory.withoutTransactions(categoryToDelete.category);
               })()
             : undefined
         }
-        confirmText="Delete"
-        cancelText="Cancel"
+        confirmText={translations.deleteCategory.confirmText}
+        cancelText={translations.deleteCategory.cancelText}
         destructive
         onConfirm={confirmDeleteCategory}
         onCancel={() => setCategoryToDelete(null)}

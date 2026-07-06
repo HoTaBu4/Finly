@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { presentPaywall } from '../services/revenueCat';
 import { usePremium } from '../state/usePremium';
+import { translations } from '../translations';
 
 export function usePaywall() {
   const [isOfflinePaywallVisible, setOfflinePaywallVisible] = useState(false);
@@ -31,7 +32,7 @@ export function usePaywall() {
         await syncPremiumStatus();
       }
     } else {
-      Alert.alert('No internet', 'Connect to the internet to purchase.');
+      Alert.alert(translations.alerts.noInternet.title, translations.alerts.noInternet.message);
     }
   }, [syncPremiumStatus]);
 

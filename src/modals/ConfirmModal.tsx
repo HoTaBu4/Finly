@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 
 type ConfirmModalProps = {
   visible: boolean;
@@ -18,8 +19,8 @@ export function ConfirmModal({
   visible,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = translations.common.confirm,
+  cancelText = translations.common.cancel,
   destructive = false,
   onConfirm,
   onCancel,

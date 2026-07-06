@@ -1,4 +1,5 @@
 import { formatMoney } from '../../utils/formatters';
+import { translations } from '../../translations';
 
 type BuildBarVisualStateInput = {
   heightPercent: number;
@@ -84,10 +85,10 @@ export function buildBarVisualState({
     rawOverLimitPercent < TINY_OVER_INDICATOR_PERCENT_THRESHOLD &&
     !isSelected;
 
-  const tinyOverLabel = `-${formatMoney(overLimitValue, { locale: 'uk-UA' })}`;
+  const tinyOverLabel = `-${formatMoney(overLimitValue)}`;
   const infoChipOverLabel =
     isOverLimit && overLimitLabel
-      ? `Over ${overLimitLabel.replace('+', '')}`
+      ? translations.categoryChart.overLimit(overLimitLabel.replace('+', ''))
       : null;
 
   return {

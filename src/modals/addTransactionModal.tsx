@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { CategorySelectDropdown } from '../components/CategorySelectDropdown';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 import { CategoryItem, TransactionType } from '../types';
 
 export type AddTransactionInput = {
@@ -53,13 +54,19 @@ export function AddTransactionModal({
 
   function handleSave() {
     if (!selectedCategory) {
-      Alert.alert('No category', 'Please choose a category.');
+      Alert.alert(
+        translations.transactionForm.noCategory.title,
+        translations.transactionForm.noCategory.message
+      );
       return;
     }
 
     const parsedAmount = Number(amountInput.trim());
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
-      Alert.alert('Invalid amount', 'Enter a valid amount greater than 0.');
+      Alert.alert(
+        translations.transactionForm.invalidAmount.title,
+        translations.transactionForm.invalidAmount.message
+      );
       return;
     }
 
@@ -82,12 +89,14 @@ export function AddTransactionModal({
           style={styles.modalCard}
           onPress={(event) => event.stopPropagation()}
         >
-          <Text style={styles.modalTitle}>Add transaction</Text>
+          <Text style={styles.modalTitle}>{translations.transactionForm.addTitle}</Text>
           <Text style={styles.modalSubtitle}>
-            {selectedCategory?.type === TransactionType.Income ? 'Income' : 'Expense'}
+            {selectedCategory?.type === TransactionType.Income
+              ? translations.common.income
+              : translations.common.expense}
           </Text>
 
-          <Text style={styles.fieldLabel}>Category</Text>
+          <Text style={styles.fieldLabel}>{translations.common.category}</Text>
           <CategorySelectDropdown
             categories={categories}
             selectedCategoryId={selectedCategoryId}
@@ -95,12 +104,12 @@ export function AddTransactionModal({
             visible={visible}
           />
 
-          <Text style={styles.fieldLabel}>Amount</Text>
+          <Text style={styles.fieldLabel}>{translations.common.amount}</Text>
           <TextInput
             style={styles.modalInput}
             value={amountInput}
             onChangeText={setAmountInput}
-            placeholder="Amount"
+            placeholder={translations.common.amount}
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
             autoFocus
@@ -108,10 +117,10 @@ export function AddTransactionModal({
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
             </Pressable>
             <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>Add</Text>
+              <Text style={styles.modalSaveText}>{translations.common.add}</Text>
             </Pressable>
           </View>
         </Pressable>

@@ -9,6 +9,7 @@ import {
   View,
 } from 'react-native';
 import { colors } from '../theme/colors';
+import { translations } from '../translations';
 
 type LimitModalProps = {
   visible: boolean;
@@ -44,7 +45,7 @@ export function LimitModal({
 
     const parsedValue = Number(normalizedText);
     if (!Number.isFinite(parsedValue) || parsedValue < 0) {
-      Alert.alert('Invalid limit', 'Enter a valid non-negative number.');
+      Alert.alert(translations.limit.invalidLimit.title, translations.limit.invalidLimit.message);
       return;
     }
 
@@ -64,7 +65,7 @@ export function LimitModal({
           onPress={(event) => event.stopPropagation()}
         >
           <Text style={styles.modalTitle}>
-            {currentLimit != null ? 'Edit limit' : 'Add limit'}
+            {currentLimit != null ? translations.limit.editTitle : translations.limit.addTitle}
           </Text>
           <Text style={styles.modalSubtitle}>{categoryName}</Text>
 
@@ -72,7 +73,7 @@ export function LimitModal({
             style={styles.modalInput}
             value={limitInput}
             onChangeText={setLimitInput}
-            placeholder="Enter limit amount"
+            placeholder={translations.limit.placeholder}
             placeholderTextColor={colors.textSecondary}
             keyboardType="numeric"
             autoFocus
@@ -80,10 +81,10 @@ export function LimitModal({
 
           <View style={styles.modalActions}>
             <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>Cancel</Text>
+              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
             </Pressable>
             <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>Save</Text>
+              <Text style={styles.modalSaveText}>{translations.common.save}</Text>
             </Pressable>
           </View>
         </Pressable>
