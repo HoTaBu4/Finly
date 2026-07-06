@@ -1,0 +1,311 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useMemo, useState } from 'react';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { colors } from '../theme/colors';
+
+type AuthMode = 'signIn' | 'signUp';
+
+const AUTH_MODE_COPY: Record<AuthMode, {
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+}> = {
+  signIn: {
+    title: 'Welcome back',
+    subtitle: 'Sign in to sync your premium data across devices.',
+    buttonLabel: 'Sign in',
+  },
+  signUp: {
+    title: 'Create account',
+    subtitle: 'Link your premium purchase and protect your Finly data.',
+    buttonLabel: 'Create account',
+  },
+};
+
+export function AuthScreen() {
+  const router = useRouter();
+  const [mode, setMode] = useState<AuthMode>('signIn');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const copy = AUTH_MODE_COPY[mode];
+  const isFormValid = useMemo(
+    () => email.trim().includes('@') && password.trim().length >= 6,
+    [email, password]
+  );
+
+  function handleSubmit() {
+    if (!isFormValid) {
+      Alert.alert('Check details', 'Enter a valid email and at least 6 characters password.');
+      return;
+    }
+
+    Alert.alert(
+      'Supabase auth',
+      'This screen is ready. Next step is connecting Supabase sign in and sign up.'
+    );
+  }
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.screen}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <View style={styles.header}>
+        <Pressable style={styles.headerButton} onPress={() => router.back()}>
+          <Ionicons name="chevron-back" size={18} color={colors.textPrimary} />
+          <Text style={styles.headerButtonText}>Back</Text>
+        </Pressable>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.iconWrap}>
+          <Ionicons name="person-circle" size={36} color={colors.accentPrimary} />
+        </View>
+
+        <View style={styles.titleWrap}>
+          <Text style={styles.title}>{copy.title}</Text>
+          <Text style={styles.subtitle}>{copy.subtitle}</Text>
+        </View>
+
+        <View style={styles.modeSwitch}>
+          <Pressable
+            style={[styles.modeButton, mode === 'signIn' && styles.modeButtonActive]}
+            onPress={() => setMode('signIn')}
+            accessibilityRole="button"
+            accessibilityState={{ selected: mode === 'signIn' }}
+          >
+            <Text style={[styles.modeText, mode === 'signIn' && styles.modeTextActive]}>
+              Sign in
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.modeButton, mode === 'signUp' && styles.modeButtonActive]}
+            onPress={() => setMode('signUp')}
+            accessibilityRole="button"
+            accessibilityState={{ selected: mode === 'signUp' }}
+          >
+            <Text style={[styles.modeText, mode === 'signUp' && styles.modeTextActive]}>
+              Create account
+            </Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.form}>
+          <View style={styles.field}>
+            <Text style={styles.label}>Email</Text>
+            <View style={styles.inputWrap}>
+              <Ionicons name="mail-outline" size={18} color={colors.textSecondary} />
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="you@example.com"
+                placeholderTextColor={colors.textSecondary}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                style={styles.input}
+              />
+            </View>
+          </View>
+
+          <View style={styles.field}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.inputWrap}>
+              <Ionicons name="lock-closed-outline" size={18} color={colors.textSecondary} />
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Minimum 6 characters"
+                placeholderTextColor={colors.textSecondary}
+                autoCapitalize="none"
+                secureTextEntry
+                textContentType={mode === 'signIn' ? 'password' : 'newPassword'}
+                style={styles.input}
+              />
+            </View>
+          </View>
+
+          <Pressable
+            style={[styles.submitButton, !isFormValid && styles.submitButtonDisabled]}
+            onPress={handleSubmit}
+            accessibilityRole="button"
+          >
+            <Text style={styles.submitButtonText}>{copy.buttonLabel}</Text>
+            <Ionicons name="arrow-forward" size={17} color={colors.cardBackground} />
+          </Pressable>
+        </View>
+
+        <View style={styles.note}>
+          <Ionicons name="shield-checkmark-outline" size={18} color={colors.green} />
+          <Text style={styles.noteText}>
+            Account linking is used only for premium sync and purchase recovery.
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.appBackground,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 6,
+  },
+  headerButton: {
+    alignSelf: 'flex-start',
+    height: 36,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  headerButtonText: {
+    fontSize: 14,
+    color: colors.textPrimary,
+    fontWeight: '600',
+  },
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 32,
+  },
+  iconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.accentPrimarySoft,
+    marginBottom: 20,
+  },
+  titleWrap: {
+    gap: 8,
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: '800',
+    color: colors.textPrimary,
+  },
+  subtitle: {
+    fontSize: 15,
+    lineHeight: 21,
+    color: colors.textSecondary,
+  },
+  modeSwitch: {
+    flexDirection: 'row',
+    borderRadius: 12,
+    padding: 4,
+    backgroundColor: colors.filterChipBackground,
+    borderWidth: 1,
+    borderColor: colors.filterChipBorder,
+    marginBottom: 18,
+  },
+  modeButton: {
+    flex: 1,
+    minHeight: 40,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modeButtonActive: {
+    backgroundColor: colors.cardBackground,
+    borderWidth: 1,
+    borderColor: colors.panelBorder,
+  },
+  modeText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.textSecondary,
+  },
+  modeTextActive: {
+    color: colors.textPrimary,
+  },
+  form: {
+    gap: 14,
+  },
+  field: {
+    gap: 7,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textSecondary,
+  },
+  inputWrap: {
+    minHeight: 52,
+    borderRadius: 13,
+    borderWidth: 1.5,
+    borderColor: colors.borderInput,
+    backgroundColor: colors.cardBackground,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 14,
+  },
+  input: {
+    flex: 1,
+    minWidth: 0,
+    color: colors.textPrimary,
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  submitButton: {
+    minHeight: 52,
+    borderRadius: 13,
+    backgroundColor: colors.accentPrimary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginTop: 4,
+  },
+  submitButtonDisabled: {
+    opacity: 0.55,
+  },
+  submitButtonText: {
+    color: colors.cardBackground,
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  note: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 9,
+    marginTop: 20,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: colors.panelBorder,
+    backgroundColor: colors.cardBackground,
+    padding: 14,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+    color: colors.textSecondary,
+  },
+});

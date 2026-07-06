@@ -206,7 +206,7 @@ export function HomeScreen() {
 
   function openAccountSettings() {
     setSettingsMenuOpen(false);
-    Alert.alert('Account settings', 'Account settings screen will be added next.');
+    router.push('/auth');
   }
 
   function saveAddedTransaction(newTransaction: AddTransactionInput) {
