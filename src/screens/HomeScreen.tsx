@@ -380,9 +380,9 @@ const styles = StyleSheet.create({
     gap: 8,
     borderRadius: 999,
     borderWidth: 1.5,
-    borderColor: colors.panelBorder,
-    backgroundColor: colors.cardBackground,
-    paddingHorizontal: 10,
+    borderColor: colors.filterChipBorder,
+    backgroundColor: colors.filterChipBackground,
+    paddingHorizontal: 12,
     paddingVertical: 6,
   },
   periodFilterText: {

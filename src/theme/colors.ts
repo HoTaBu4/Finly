@@ -6,6 +6,8 @@ export const colors = {
   borderSoft: '#ececf1',
   borderInput: '#dfdfdf',
   panelBorder: '#efeff7',
+  filterChipBackground: '#f7f6fc',
+  filterChipBorder: '#e6e4f2',
   neutralHighlight: '#e1a1fb29',
   accentPrimary: '#7b6cff',
   accentPrimarySoft: '#ece8ff',

@@ -139,6 +139,79 @@ Freemium з чітким поділом на безкоштовний і пре�
 6. Конфлікти → updatedAt порівняння (last write wins)
 ```
 
+### Flow Apple Pay / card transaction automation
+
+Автоімпорт через Apple Pay / card transaction планується як automation bridge, а не як прямий доступ Finly до Wallet. Додаток не читає історію Apple Pay напряму — спочатку дані має передати Shortcuts automation, bank notification або bank sync.
+
+```
+Apple Pay / card transaction
+→ Shortcuts automation
+→ отримуємо дані: amount, merchant, date
+→ AI класифікує merchant
+→ Finly deep link/API
+→ addTransaction(...)
+```
+
+Очікуваний payload для Finly:
+
+```json
+{
+  "amount": 42.5,
+  "merchant": "Uber",
+  "date": "2026-06-29T12:30:00.000Z",
+  "source": "apple_pay"
+}
+```
+
+AI має отримати список реальних категорій юзера і повернути `categoryId`, а не вигадану назву категорії:
+
+```json
+{
+  "action": "use_existing",
+  "categoryId": "2",
+  "confidence": 0.94,
+  "reason": "Uber схожий на транспортну витрату"
+}
+```
+
+Після класифікації Finly:
+
+```
+1. Перевіряє, що categoryId існує і належить юзеру
+2. Якщо confidence низький → просить юзера підтвердити категорію
+3. Створює витрату → addTransaction(...)
+4. Зберігає merchant і source = 'apple_pay' або 'google_pay'
+```
+
+MVP deep link для Shortcuts:
+
+```txt
+finly://add-transaction?amount=42.50&merchant=Uber&source=apple_pay
+```
+
+Поточна реалізація в застосунку:
+
+```
+1. Finly відкривається через deep link
+2. Парсить amount, merchant, date, source
+3. Вибирає першу expense категорію як безпечний fallback
+4. Відкриває AddTransactionModal з уже заповненою сумою
+5. Після підтвердження юзером викликає addTransaction(...)
+```
+
+AI категоризацію не можна викликати напряму з мобільного застосунку, бо API key буде доступний у клієнті. Правильний production flow:
+
+```
+Shortcuts / bank sync
+→ backend /classify-transaction
+→ OpenAI gpt-5.4-nano з structured output
+→ categoryId / ask_user
+→ Finly deep link/API
+→ addTransaction(...)
+```
+
+Для дешевого AI варіанту використовуємо малу модель для classification / data extraction зі structured outputs. AI викликається тільки на backend, бо API key не можна класти в мобільний застосунок.
+
 ---
 
 ## Структура файлів
