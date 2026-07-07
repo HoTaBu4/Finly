@@ -396,7 +396,7 @@ const pl: Translations = {
 
 export type AppLocale = 'en' | 'pl';
 
-export const DEFAULT_LOCALE: AppLocale = 'pl';
+export const DEFAULT_LOCALE: AppLocale = 'en';
 
 export const translationCatalog: Record<AppLocale, Translations> = {
   en,
