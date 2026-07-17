@@ -14,14 +14,22 @@ import {
 } from 'react-native';
 import { colors } from '../theme/colors';
 import { translations } from '../translations';
+import { signInWithEmail, signUpWithEmail } from '../services/supabaseClient';
+import { onAuthComplete, migrateLocalToSupabase, loadDataFromSupabase } from '../services/syncService';
+import { usePremium } from '../state/usePremium';
+import { usePaywall } from '../hooks/usePaywall';
+import { PaywallModal } from '../modals/PaywallModal';
 
 type AuthMode = 'signIn' | 'signUp';
 
 export function AuthScreen() {
   const router = useRouter();
+  const { isPremium } = usePremium();
+  const { showPaywall, isOfflinePaywallVisible, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
   const [mode, setMode] = useState<AuthMode>('signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const copy = translations.auth[mode];
   const isFormValid = useMemo(
@@ -29,7 +37,7 @@ export function AuthScreen() {
     [email, password]
   );
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (!isFormValid) {
       Alert.alert(
         translations.auth.validationError.title,
@@ -38,10 +46,40 @@ export function AuthScreen() {
       return;
     }
 
-    Alert.alert(
-      translations.auth.pendingSupabase.title,
-      translations.auth.pendingSupabase.message
-    );
+    try {
+      setIsSubmitting(true);
+
+      if (mode === 'signIn') {
+        const { user } = await signInWithEmail(email.trim(), password);
+        if (user) {
+          await onAuthComplete(user.id);
+          await loadDataFromSupabase(user.id);
+          await usePremium.getState().syncPremiumStatus();
+        }
+        Alert.alert(
+          translations.auth.signInSuccess.title,
+          translations.auth.signInSuccess.message
+        );
+      } else {
+        const { user } = await signUpWithEmail(email.trim(), password);
+        if (user) {
+          await onAuthComplete(user.id);
+          await migrateLocalToSupabase(user.id);
+          await usePremium.getState().syncPremiumStatus();
+        }
+        Alert.alert(
+          translations.auth.signUpSuccess.title,
+          translations.auth.signUpSuccess.message
+        );
+      }
+
+      router.back();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : translations.auth.authError.message;
+      Alert.alert(translations.auth.authError.title, message);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -83,7 +121,13 @@ export function AuthScreen() {
           </Pressable>
           <Pressable
             style={[styles.modeButton, mode === 'signUp' && styles.modeButtonActive]}
-            onPress={() => setMode('signUp')}
+            onPress={() => {
+              if (!isPremium) {
+                showPaywall();
+                return;
+              }
+              setMode('signUp');
+            }}
             accessibilityRole="button"
             accessibilityState={{ selected: mode === 'signUp' }}
           >
@@ -129,12 +173,28 @@ export function AuthScreen() {
             </View>
           </View>
 
+          {mode === 'signIn' && (
+            <Pressable
+              style={styles.forgotPasswordButton}
+              onPress={() => router.push('/reset-password')}
+              accessibilityRole="button"
+            >
+              <Text style={styles.forgotPasswordText}>{translations.auth.forgotPassword}</Text>
+            </Pressable>
+          )}
+
           <Pressable
-            style={[styles.submitButton, !isFormValid && styles.submitButtonDisabled]}
+            style={[
+              styles.submitButton,
+              (!isFormValid || isSubmitting) && styles.submitButtonDisabled,
+            ]}
             onPress={handleSubmit}
+            disabled={!isFormValid || isSubmitting}
             accessibilityRole="button"
           >
-            <Text style={styles.submitButtonText}>{copy.buttonLabel}</Text>
+            <Text style={styles.submitButtonText}>
+              {isSubmitting ? translations.auth.submitting : copy.buttonLabel}
+            </Text>
             <Ionicons name="arrow-forward" size={17} color={colors.cardBackground} />
           </Pressable>
         </View>
@@ -146,6 +206,11 @@ export function AuthScreen() {
           </Text>
         </View>
       </ScrollView>
+      <PaywallModal
+        visible={isOfflinePaywallVisible}
+        onClose={closeOfflinePaywall}
+        onPurchasePress={handleOfflinePurchaseAttempt}
+      />
     </KeyboardAvoidingView>
   );
 }
@@ -232,6 +297,15 @@ const styles = StyleSheet.create({
   },
   form: {
     gap: 14,
+  },
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',
+    marginTop: -4,
+  },
+  forgotPasswordText: {
+    color: colors.accentPrimary,
+    fontSize: 13,
+    fontWeight: '800',
   },
   field: {
     gap: 7,

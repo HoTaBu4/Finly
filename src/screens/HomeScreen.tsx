@@ -10,9 +10,15 @@ import { EditTransactionModal } from '../modals/EditTransactionModal';
 import { LimitModal } from '../modals/LimitModal';
 import { PaywallModal } from '../modals/PaywallModal';
 import { AddTransactionInput, AddTransactionModal } from '../modals/addTransactionModal';
+import { ConfirmModal } from '../modals/ConfirmModal';
 import { SettingsMenuSheet } from '../components/SettingsMenuSheet';
 import { StickyAddBar } from '../components/StickyAddBar';
 import { TopBalanceSection } from '../components/TopBalanceSection';
+import {
+  getCurrentAuthUser,
+  signOut,
+  subscribeToAuthUserChange,
+} from '../services/supabaseClient';
 import { useFinanceData } from '../state/FinanceDataContext';
 import { usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
@@ -43,9 +49,11 @@ export function HomeScreen() {
   const [isDateRangePickerOpen, setDateRangePickerOpen] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState(() => getThisMonthRange());
   const [isSettingsMenuOpen, setSettingsMenuOpen] = useState(false);
+  const [isAccountModalOpen, setAccountModalOpen] = useState(false);
   const [trackingMode, setTrackingMode] = useState<TrackingMode>(TrackingMode.ExpensesOnly);
   const [transactionFilter, setTransactionFilter] =
     useState<HistoryTransactionFilter>(HistoryTransactionFilter.Expense);
+  const [authUserEmail, setAuthUserEmail] = useState<string | null>(null);
   const [transactionToEdit, setTransactionToEdit] = useState<HistoryTransaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<HistoryTransaction | null>(null);
 
@@ -118,6 +126,31 @@ export function HomeScreen() {
 
   const selectedCategory =
     visibleCategories.find((item) => item.id === selectedCategoryId) ?? null;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getCurrentAuthUser()
+      .then((user) => {
+        if (isMounted) {
+          setAuthUserEmail(user?.email ?? null);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setAuthUserEmail(null);
+        }
+      });
+
+    const subscription = subscribeToAuthUserChange((user) => {
+      setAuthUserEmail(user?.email ?? null);
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     if (!selectedCategoryId) {
@@ -207,7 +240,23 @@ export function HomeScreen() {
 
   function openAccountSettings() {
     setSettingsMenuOpen(false);
+    if (authUserEmail) {
+      setAccountModalOpen(true);
+      return;
+    }
     router.push('/auth');
+  }
+
+  async function handleLogOut() {
+    try {
+      await signOut();
+      setAuthUserEmail(null);
+      setAccountModalOpen(false);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : translations.settings.logOutError.message;
+      Alert.alert(translations.settings.logOutError.title, message);
+    }
   }
 
   function saveAddedTransaction(newTransaction: AddTransactionInput) {
@@ -315,6 +364,17 @@ export function HomeScreen() {
           showPaywall();
         }}
         isPremium={isPremium}
+        authUserEmail={authUserEmail}
+      />
+      <ConfirmModal
+        visible={isAccountModalOpen}
+        title={authUserEmail ?? translations.settings.loggedIn}
+        message={translations.settings.accountConnected}
+        confirmText={translations.settings.logOut}
+        cancelText={translations.common.cancel}
+        destructive
+        onConfirm={handleLogOut}
+        onCancel={() => setAccountModalOpen(false)}
       />
       {transactionToEdit && (
         <EditTransactionModal

@@ -1,10 +1,18 @@
 import { ExpoConfig, ConfigContext } from 'expo/config';
 
+function normalizeSupabaseUrl(url?: string) {
+  if (!url) {
+    return undefined;
+  }
+
+  return new URL(url).origin;
+}
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'finly',
-  slug: 'finly',
-  scheme: 'finly',
+  name: 'Trackfin',
+  slug: 'trackfin',
+  scheme: 'trackfin',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -17,10 +25,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'com.finly.app',
+    bundleIdentifier: 'com.trackfin.app',
   },
   android: {
-    package: 'com.finly.app',
+    package: 'com.trackfin.app',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',
@@ -32,5 +40,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: ['expo-router'],
   extra: {
     revenueCatApiKey: process.env.REVENUECAT_API_KEY,
+    supabaseUrl: normalizeSupabaseUrl(
+      process.env.EXPO_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL
+    ),
+    supabaseAnonKey:
+      process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY,
   },
 });

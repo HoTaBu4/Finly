@@ -43,14 +43,73 @@ const en = {
     emailPlaceholder: 'you@example.com',
     password: 'Password',
     passwordPlaceholder: 'Minimum 6 characters',
+    forgotPassword: 'Forgot password?',
     note: 'Account linking is used only for premium sync and purchase recovery.',
     validationError: {
       title: 'Check details',
       message: 'Enter a valid email and at least 6 characters password.',
     },
-    pendingSupabase: {
-      title: 'Supabase auth',
-      message: 'This screen is ready. Next step is connecting Supabase sign in and sign up.',
+    submitting: 'Please wait...',
+    authError: {
+      title: 'Auth error',
+      message: 'Could not complete authentication.',
+    },
+    signInSuccess: {
+      title: 'Signed in',
+      message: 'Your account is connected.',
+    },
+    signUpSuccess: {
+      title: 'Account created',
+      message: 'Check your email if confirmation is enabled.',
+    },
+    signUpRequiresPremium: {
+      title: 'Premium required',
+      message: 'Purchase Premium first to create an account and sync your data.',
+    },
+  },
+  resetPassword: {
+    requestTitle: 'Reset password',
+    requestSubtitle: 'Enter your email and we will send a secure password reset link.',
+    updateTitle: 'Create new password',
+    updateSubtitle: 'Choose a new password for your Finly account.',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm password',
+    confirmPasswordPlaceholder: 'Repeat password',
+    sendLink: 'Send reset link',
+    updatePassword: 'Update password',
+    note: 'Open the reset link from this device so Finly can verify your recovery session.',
+    invalidEmail: {
+      title: 'Check email',
+      message: 'Enter a valid email address.',
+    },
+    invalidPassword: {
+      title: 'Check password',
+      message: 'Passwords must match and contain at least 6 characters.',
+    },
+    emailSent: {
+      title: 'Check your inbox',
+      message: 'If this email exists, Supabase will send a reset link.',
+    },
+    passwordUpdated: {
+      title: 'Password updated',
+      message: 'You can sign in with your new password.',
+    },
+    error: {
+      title: 'Reset error',
+      message: 'Could not complete password reset.',
+    },
+  },
+  authConfirm: {
+    title: 'Email confirmed',
+    successTitle: 'You are all set',
+    verifyingTitle: 'Confirming email...',
+    message: 'Your email is confirmed and your account is connected.',
+    verifyingMessage: 'Finly is verifying your confirmation link.',
+    missingSessionMessage: 'Your email may already be confirmed. Try signing in to continue.',
+    buttonLabel: 'Continue',
+    error: {
+      title: 'Confirmation error',
+      message: 'Could not complete email confirmation.',
     },
   },
   categoryForm: {
@@ -169,6 +228,14 @@ const en = {
     premiumActive: 'Premium Active',
     manageCategories: 'Manage categories',
     accountSettings: 'Account settings',
+    syncBanner: 'Sign in to sync your data',
+    loggedIn: 'Logged in',
+    accountConnected: 'Your account is connected.',
+    logOut: 'Log out',
+    logOutError: {
+      title: 'Log out error',
+      message: 'Could not log out.',
+    },
   },
   topBalance: {
     balance: 'Balance',
@@ -242,14 +309,73 @@ const pl: Translations = {
     emailPlaceholder: 'ty@example.com',
     password: 'Hasło',
     passwordPlaceholder: 'Minimum 6 znaków',
+    forgotPassword: 'Nie pamiętasz hasła?',
     note: 'Połączenie konta służy tylko do synchronizacji premium i odzyskiwania zakupu.',
     validationError: {
       title: 'Sprawdź dane',
       message: 'Podaj poprawny email i hasło o długości co najmniej 6 znaków.',
     },
-    pendingSupabase: {
-      title: 'Supabase auth',
-      message: 'Ten ekran jest gotowy. Następny krok to podłączenie logowania i rejestracji Supabase.',
+    submitting: 'Chwileczkę...',
+    authError: {
+      title: 'Błąd logowania',
+      message: 'Nie udało się ukończyć logowania.',
+    },
+    signInSuccess: {
+      title: 'Zalogowano',
+      message: 'Twoje konto jest połączone.',
+    },
+    signUpSuccess: {
+      title: 'Konto utworzone',
+      message: 'Sprawdź email, jeśli potwierdzenie konta jest włączone.',
+    },
+    signUpRequiresPremium: {
+      title: 'Wymagany Premium',
+      message: 'Kup Premium, aby utworzyć konto i synchronizować dane.',
+    },
+  },
+  resetPassword: {
+    requestTitle: 'Resetuj hasło',
+    requestSubtitle: 'Podaj email, a wyślemy bezpieczny link do resetowania hasła.',
+    updateTitle: 'Utwórz nowe hasło',
+    updateSubtitle: 'Wybierz nowe hasło do konta Finly.',
+    newPassword: 'Nowe hasło',
+    confirmPassword: 'Potwierdź hasło',
+    confirmPasswordPlaceholder: 'Powtórz hasło',
+    sendLink: 'Wyślij link',
+    updatePassword: 'Zmień hasło',
+    note: 'Otwórz link resetujący na tym urządzeniu, aby Finly mogło zweryfikować sesję.',
+    invalidEmail: {
+      title: 'Sprawdź email',
+      message: 'Podaj poprawny adres email.',
+    },
+    invalidPassword: {
+      title: 'Sprawdź hasło',
+      message: 'Hasła muszą być takie same i mieć co najmniej 6 znaków.',
+    },
+    emailSent: {
+      title: 'Sprawdź skrzynkę',
+      message: 'Jeśli ten email istnieje, Supabase wyśle link resetujący.',
+    },
+    passwordUpdated: {
+      title: 'Hasło zmienione',
+      message: 'Możesz zalogować się nowym hasłem.',
+    },
+    error: {
+      title: 'Błąd resetowania',
+      message: 'Nie udało się ukończyć resetowania hasła.',
+    },
+  },
+  authConfirm: {
+    title: 'Email potwierdzony',
+    successTitle: 'Gotowe',
+    verifyingTitle: 'Potwierdzanie emaila...',
+    message: 'Twój email jest potwierdzony, a konto połączone.',
+    verifyingMessage: 'Finly weryfikuje link potwierdzający.',
+    missingSessionMessage: 'Email może być już potwierdzony. Spróbuj się zalogować.',
+    buttonLabel: 'Dalej',
+    error: {
+      title: 'Błąd potwierdzenia',
+      message: 'Nie udało się ukończyć potwierdzania emaila.',
     },
   },
   categoryForm: {
@@ -368,6 +494,14 @@ const pl: Translations = {
     premiumActive: 'Premium aktywne',
     manageCategories: 'Zarządzaj kategoriami',
     accountSettings: 'Ustawienia konta',
+    syncBanner: 'Zaloguj się, aby zsynchronizować dane',
+    loggedIn: 'Zalogowano',
+    accountConnected: 'Twoje konto jest połączone.',
+    logOut: 'Wyloguj',
+    logOutError: {
+      title: 'Błąd wylogowania',
+      message: 'Nie udało się wylogować.',
+    },
   },
   topBalance: {
     balance: 'Saldo',

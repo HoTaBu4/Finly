@@ -182,6 +182,7 @@ export function DateRangePickerModal({
 
     return (
       <Pressable
+        key={preset}
         style={[
           styles.quickChip,
           isCompact && styles.quickChipCompact,

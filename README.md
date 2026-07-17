@@ -223,7 +223,8 @@ src/
 │   ├── FinanceDataContext.ts    — основний store (categories, transactions)
 │   └── usePremium.ts            — premium status store
 ├── services/
-│   └── revenueCat.ts            — RevenueCat ініціалізація і helpers
+│   ├── revenueCat.ts            — RevenueCat ініціалізація і helpers
+│   └── supabaseClient.ts        — Supabase Auth client
 ├── modals/
 │   ├── PaywallModal.tsx         — fallback paywall (офлайн)
 │   ├── addTransactionModal.tsx
@@ -243,9 +244,27 @@ src/
 app/
 ├── _layout.tsx                  — root layout, initRevenueCat()
 ├── index.tsx                    — main page
+├── auth.tsx                     — email login / sign up
+├── reset-password.tsx           — password reset flow
 └── manage-categories.tsx
 
 app.config.ts                    — Expo config (читає .env)
+```
+
+### Environment variables
+
+```env
+REVENUECAT_API_KEY=your_key
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+```
+
+`EXPO_PUBLIC_SUPABASE_URL` should be the project origin only, without `/rest/v1` or `/auth/v1`.
+
+Supabase Auth redirect URL for password reset:
+
+```text
+finly://reset-password
 ```
 
 ---
@@ -310,6 +329,11 @@ transactions (
 ---
 
 ## Плани реалізації
+
+### UX Backlog
+- Додати toast-повідомлення для результатів дій користувача: sign in/sign up, confirm email,
+  reset password, CRUD операції, помилки мережі. Toast має коротко пояснювати, що відбулося,
+  і замінити частину blocking `Alert.alert`, де не потрібна негайна дія.
 
 ### Фаза 1 — Локальний стейт без persistence ✅ (поточний стан)
 - Zustand store з хардкодженими даними

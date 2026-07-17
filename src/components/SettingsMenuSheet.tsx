@@ -13,6 +13,7 @@ type SettingsMenuSheetProps = {
   onAccountPress: () => void;
   onPremiumPress: () => void;
   isPremium: boolean;
+  authUserEmail: string | null;
 };
 
 type ToggleOption<T extends string> = {
@@ -34,7 +35,10 @@ export function SettingsMenuSheet({
   onAccountPress,
   onPremiumPress,
   isPremium,
+  authUserEmail,
 }: SettingsMenuSheetProps) {
+  const isLoggedIn = Boolean(authUserEmail);
+
   return (
     <Modal
       visible={visible}
@@ -49,6 +53,14 @@ export function SettingsMenuSheet({
         >
           <View style={styles.grabber} />
           <Text style={styles.title}>{translations.settings.title}</Text>
+
+          {!isLoggedIn && (
+            <Pressable style={styles.syncBanner} onPress={onAccountPress}>
+              <Ionicons name="cloud-upload-outline" size={18} color="#007AFF" />
+              <Text style={styles.syncBannerText}>{translations.settings.syncBanner}</Text>
+              <Ionicons name="chevron-forward" size={14} color="#007AFF" />
+            </Pressable>
+          )}
 
           <View style={styles.section}>
             <Text style={styles.label}>{translations.settings.trackingMode}</Text>
@@ -105,8 +117,17 @@ export function SettingsMenuSheet({
 
             <Pressable style={styles.listItem} onPress={onAccountPress}>
               <View style={styles.listItemLeft}>
-                <Ionicons name="person-outline" size={18} color={colors.textPrimary} />
-                <Text style={styles.listText}>{translations.settings.accountSettings}</Text>
+                <Ionicons
+                  name={isLoggedIn ? 'person-circle' : 'person-outline'}
+                  size={18}
+                  color={isLoggedIn ? colors.accentPrimary : colors.textPrimary}
+                />
+                <View>
+                  <Text style={styles.listText}>
+                    {isLoggedIn ? translations.settings.loggedIn : translations.settings.accountSettings}
+                  </Text>
+                  {authUserEmail && <Text style={styles.listSubtext}>{authUserEmail}</Text>}
+                </View>
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
             </Pressable>
@@ -148,6 +169,21 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.textPrimary,
   },
+  syncBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: '#F0F7FF',
+  },
+  syncBannerText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
   section: {
     gap: 8,
   },
@@ -183,8 +219,6 @@ const styles = StyleSheet.create({
   },
   listWrap: {
     marginTop: 2,
-    borderWidth: 1,
-    borderColor: colors.panelBorder,
     borderRadius: 12,
     overflow: 'hidden',
   },
@@ -207,6 +241,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: colors.textPrimary,
+  },
+  listSubtext: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.textSecondary,
   },
   premiumItem: {
     minHeight: 46,

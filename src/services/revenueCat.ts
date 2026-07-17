@@ -39,6 +39,8 @@ export async function presentPaywall(): Promise<boolean> {
         return false;
     }
   } catch {
+    // RevenueCat unavailable (no products configured, network error, etc.)
+    // Returns false so usePaywall shows the offline fallback modal
     return false;
   }
 }
