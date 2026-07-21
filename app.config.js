@@ -1,6 +1,4 @@
-import { ExpoConfig, ConfigContext } from 'expo/config';
-
-function normalizeSupabaseUrl(url?: string) {
+function normalizeSupabaseUrl(url) {
   if (!url) {
     return undefined;
   }
@@ -8,7 +6,7 @@ function normalizeSupabaseUrl(url?: string) {
   return new URL(url).origin;
 }
 
-export default ({ config }: ConfigContext): ExpoConfig => ({
+module.exports = ({ config }) => ({
   ...config,
   name: 'Trackfin',
   slug: 'trackfin',
@@ -24,8 +22,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: '#ffffff',
   },
   ios: {
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: 'com.trackfin.app',
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     package: 'com.trackfin.app',
@@ -39,11 +40,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: ['expo-router'],
   extra: {
+    eas: {
+      projectId: '97f4871a-03e3-4ffa-a9ee-b4d1f0ea9f16',
+    },
     revenueCatApiKey: process.env.REVENUECAT_API_KEY,
     supabaseUrl: normalizeSupabaseUrl(
-      process.env.EXPO_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL
+      process.env.EXPO_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
     ),
     supabaseAnonKey:
-      process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY,
+      process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY,
   },
 });
