@@ -8,9 +8,9 @@ function normalizeSupabaseUrl(url) {
 
 module.exports = ({ config }) => ({
   ...config,
-  name: 'Trackfin',
-  slug: 'trackfin',
-  scheme: 'trackfin',
+  name: 'Finzelo',
+  slug: 'finzelo',
+  scheme: 'finzelo',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -23,13 +23,13 @@ module.exports = ({ config }) => ({
   },
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'com.trackfin.app',
+    bundleIdentifier: 'com.finzelo.app',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
   },
   android: {
-    package: 'com.trackfin.app',
+    package: 'com.finzelo.app',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',

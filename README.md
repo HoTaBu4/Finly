@@ -1,4 +1,4 @@
-# Finly — Product Requirements
+# Finzelo — Product Requirements
 
 ## Модель монетизації
 
@@ -141,18 +141,18 @@ Freemium з чітким поділом на безкоштовний і пре�
 
 ### Flow Apple Pay / card transaction automation
 
-Автоімпорт через Apple Pay / card transaction планується як automation bridge, а не як прямий доступ Finly до Wallet. Додаток не читає історію Apple Pay напряму — спочатку дані має передати Shortcuts automation, bank notification або bank sync.
+Автоімпорт через Apple Pay / card transaction планується як automation bridge, а не як прямий доступ Finzelo до Wallet. Додаток не читає історію Apple Pay напряму — спочатку дані має передати Shortcuts automation, bank notification або bank sync.
 
 ```
 Apple Pay / card transaction
 → Shortcuts automation
 → отримуємо дані: amount, merchant, date
 → AI класифікує merchant
-→ Finly deep link/API
+→ Finzelo deep link/API
 → addTransaction(...)
 ```
 
-Очікуваний payload для Finly:
+Очікуваний payload для Finzelo:
 
 ```json
 {
@@ -174,7 +174,7 @@ AI має отримати список реальних категорій юз
 }
 ```
 
-Після класифікації Finly:
+Після класифікації Finzelo:
 
 ```
 1. Перевіряє, що categoryId існує і належить юзеру
@@ -186,13 +186,13 @@ AI має отримати список реальних категорій юз
 MVP deep link для Shortcuts:
 
 ```txt
-finly://add-transaction?amount=42.50&merchant=Uber&source=apple_pay
+finzelo://add-transaction?amount=42.50&merchant=Uber&source=apple_pay
 ```
 
 Поточна реалізація в застосунку:
 
 ```
-1. Finly відкривається через deep link
+1. Finzelo відкривається через deep link
 2. Парсить amount, merchant, date, source
 3. Вибирає першу expense категорію як безпечний fallback
 4. Відкриває AddTransactionModal з уже заповненою сумою
@@ -206,7 +206,7 @@ Shortcuts / bank sync
 → backend /classify-transaction
 → OpenAI gpt-5.4-nano з structured output
 → categoryId / ask_user
-→ Finly deep link/API
+→ Finzelo deep link/API
 → addTransaction(...)
 ```
 
@@ -264,7 +264,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 Supabase Auth redirect URL for password reset:
 
 ```text
-finly://reset-password
+finzelo://reset-password
 ```
 
 ---
