@@ -9,7 +9,7 @@ function normalizeSupabaseUrl(url) {
 module.exports = ({ config }) => ({
   ...config,
   name: 'Finzelo',
-  slug: 'finzelo',
+  slug: 'trackfin',
   scheme: 'finzelo',
   version: '1.1.0',
   orientation: 'portrait',
@@ -23,13 +23,13 @@ module.exports = ({ config }) => ({
   },
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'com.finzelo.app',
+    bundleIdentifier: 'com.trackfin.app',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
     },
   },
   android: {
-    package: 'com.finzelo.app',
+    package: 'com.trackfin.app',
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#ffffff',
