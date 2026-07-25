@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/HoTaBu4/Finly/compare/v1.1.0...v1.1.1) (2026-07-25)
+
+
+### Bug Fixes
+
+* added a splash image ([d9a31b1](https://github.com/HoTaBu4/Finly/commit/d9a31b19b92fc53115610ebbf73cf8e94bec3251))
+* return an old id ([5f03479](https://github.com/HoTaBu4/Finly/commit/5f03479be92c61053d58798254909f8d79ac1b21))
+
 ## 1.1.0 (2026-07-23)
 
 
