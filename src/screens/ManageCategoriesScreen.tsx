@@ -122,6 +122,13 @@ export function ManageCategoriesScreen() {
   }
 
   function deleteCategory(category: CategoryItem) {
+    if (category.isSystem) {
+      Alert.alert(
+        translations.manageCategories.cannotDeleteSystem.title,
+        translations.manageCategories.cannotDeleteSystem.message
+      );
+      return;
+    }
     setCategoryToDelete(category);
   }
 

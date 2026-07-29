@@ -88,6 +88,7 @@ export type CategoryItem = {
   limit: number | null;
   icon: CategoryIconKey;
   updatedAt: string; // ISO timestamp — для sync conflict resolution
+  isSystem?: boolean; // System categories cannot be deleted by user
 };
 
 export type CategoryChartItem = CategoryItem & {

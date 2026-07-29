@@ -183,6 +183,10 @@ const en = {
       title: 'Type cannot be changed',
       message: 'This category is already used in transactions. Create a new category with another type.',
     },
+    cannotDeleteSystem: {
+      title: 'Cannot delete',
+      message: 'System categories cannot be deleted.',
+    },
   },
   paywall: {
     title: 'Get premium',
@@ -448,6 +452,10 @@ const pl: Translations = {
     typeCannotBeChanged: {
       title: 'Nie można zmienić typu',
       message: 'Ta kategoria jest już używana w transakcjach. Utwórz nową kategorię z innym typem.',
+    },
+    cannotDeleteSystem: {
+      title: 'Nie można usunąć',
+      message: 'Kategorii systemowych nie można usunąć.',
     },
   },
   paywall: {

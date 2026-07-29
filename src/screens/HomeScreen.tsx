@@ -22,6 +22,7 @@ import {
 import { useFinanceData } from '../state/FinanceDataContext';
 import { usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
+import { useDeepLinkTransaction } from '../hooks/useDeepLinkTransaction';
 import { colors } from '../theme/colors';
 import { translations } from '../translations';
 import {
@@ -43,6 +44,8 @@ export function HomeScreen() {
   const { categories, updateCategory, historyItems, addTransaction, updateTransaction, deleteTransaction } = useFinanceData();
   const { isPremium } = usePremium();
   const { isOfflinePaywallVisible, showPaywall, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
+
+  useDeepLinkTransaction();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);

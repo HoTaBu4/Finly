@@ -8,6 +8,8 @@ function toIsoDaysAgo(daysAgo: number) {
 
 const NOW = new Date().toISOString();
 
+export const OTHER_EXPENSE_CATEGORY_ID = '__other_expense__';
+
 export const INITIAL_CATEGORIES: CategoryItem[] = [
   {
     id: '1',
@@ -64,6 +66,15 @@ export const INITIAL_CATEGORIES: CategoryItem[] = [
     limit: null,
     icon: CategoryIconKey.Receipt,
     updatedAt: NOW,
+  },
+  {
+    id: '__other_expense__',
+    category: 'Other',
+    type: TransactionType.Expense,
+    limit: null,
+    icon: CategoryIconKey.EllipsisHorizontal,
+    updatedAt: NOW,
+    isSystem: true,
   },
 ];
 
