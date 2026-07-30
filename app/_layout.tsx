@@ -1,13 +1,15 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { initRevenueCat } from '../src/services/revenueCat';
+
+// TODO: Re-enable when App Store Connect products are configured
+// import { useEffect } from 'react';
+// import { initRevenueCat } from '../src/services/revenueCat';
 
 export default function RootLayout() {
-  useEffect(() => {
-    initRevenueCat();
-  }, []);
+  // useEffect(() => {
+  //   initRevenueCat();
+  // }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
