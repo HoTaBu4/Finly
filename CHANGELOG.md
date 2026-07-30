@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/HoTaBu4/Finly/compare/v1.1.1...v1.2.0) (2026-07-30)
+
+
+### Features
+
+* add deep link auto-import, system "Other" category, and paywall fallback ([4dab6ac](https://github.com/HoTaBu4/Finly/commit/4dab6ac35c02b8cc838b96bbdcfe6af268d5ecef))
+
+
+### Bug Fixes
+
+* disable a revenueCat ([0d348fc](https://github.com/HoTaBu4/Finly/commit/0d348fc70ecd6b2d7677d1553b87e8ba62d11129))
+
 ### [1.1.1](https://github.com/HoTaBu4/Finly/compare/v1.1.0...v1.1.1) (2026-07-25)
 
 
