@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { mmkvStorage } from './mmkv';
-import { checkPremiumStatus } from '../services/revenueCat';
 
 type PremiumState = {
   isPremium: boolean;
@@ -17,8 +16,13 @@ export const usePremium = create<PremiumState>()(
       setPremium: (value) => set({ isPremium: value }),
 
       syncPremiumStatus: async () => {
-        const isPremium = await checkPremiumStatus();
-        set({ isPremium });
+        try {
+          const { checkPremiumStatus } = await import('../services/revenueCat');
+          const isPremium = await checkPremiumStatus();
+          set({ isPremium });
+        } catch {
+          // RevenueCat not configured yet — keep current state
+        }
       },
     }),
     {

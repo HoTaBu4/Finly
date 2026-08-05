@@ -22,7 +22,7 @@ module.exports = ({ config }) => ({
     backgroundColor: '#ffffff',
   },
   ios: {
-    supportsTablet: false,
+    supportsTablet: true,
     bundleIdentifier: 'com.trackfin.app',
     infoPlist: {
       ITSAppUsesNonExemptEncryption: false,
