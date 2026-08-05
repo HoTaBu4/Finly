@@ -399,3 +399,60 @@ transactions (
 > **Фаза 2** ✅ — MMKV підключений, дані зберігаються локально.
 > **Фаза 3** ✅ — Premium Gate реалізований (usePremium, PaywallModal, ліміти категорій).
 > **Фаза 4** 🔄 — RevenueCat ініціалізований, потрібно встановити `react-native-purchases`.
+
+
+---
+
+## Маркетинг і реклама
+
+### Цільові регіони
+
+| Tier | Регіони | CPI (cost per install) | LTV потенціал | Стратегія |
+|---|---|---|---|---|
+| **1** | US, UK, Canada, Australia | $2-5 | Високий (платять за підписки) | Основний фокус, найприбутковіший |
+| **2** | Germany, France, Netherlands, Nordics | $1.5-3 | Середньо-високий | Хороший баланс ціна/якість |
+| **3** | Poland, Czech, Romania, Ukraine | $0.3-1 | Низький | Дешеві installs для соц. доказу |
+| **4** | India, Brazil, Indonesia | $0.1-0.5 | Дуже низький | Тільки для об'єму (не прибуток) |
+
+Для підписочного додатку ($3.99/міс) — фокус на Tier 1-2.
+
+### Рекламні канали
+
+| Канал | Мін. бюджет | Найкраще для | Конверсія |
+|---|---|---|---|
+| **Apple Search Ads** | $5/день | iOS installs, висока intent | Найвища |
+| **Google UAC** | $10/день | Android + YouTube + Search | Середня |
+| **Meta Ads (IG/FB)** | $5/день | Таргетинг по інтересах, відео | Середня |
+| **TikTok Ads** | $20/день | Молода аудиторія, відео контент | Нижча |
+
+### Фази запуску реклами
+
+**Фаза 1 — Валідація ($50-100, перший тиждень):**
+- Apple Search Ads — US, UK
+- Ключові слова: "expense tracker", "budget tracker", "money tracker", "spending tracker"
+- Мета: визначити CPI і конверсію в premium
+
+**Фаза 2 — Масштабування (якщо CPI < $3 і ROAS > 1):**
+- Meta Ads (Instagram Stories/Reels)
+- Таргетинг: 25-45 років, інтереси "personal finance", "budgeting", "investing"
+- Креатив: 15-сек відео "Track expenses in 3 taps"
+- Додати Germany, France, Netherlands
+
+**Фаза 3 — Оптимізація:**
+- A/B тестування креативів
+- Lookalike audiences на основі premium конверсій
+- Retargeting юзерів які встановили але не купили
+
+### Ключові метрики для відстеження
+
+- **CPI** (Cost Per Install) — скільки коштує один install
+- **Trial-to-paid conversion** — % юзерів які купили premium (ціль > 5%)
+- **ROAS** (Return on Ad Spend) — дохід / витрати на рекламу (ціль > 1 за 30 днів)
+- **D1/D7/D30 retention** — скільки юзерів повертаються
+- **LTV** (Lifetime Value) — скільки один юзер приносить за весь час
+
+### Креативи
+
+- Короткі відео (15 сек) для Instagram/TikTok: демо додавання витрати в 3 тапи
+- Скріншоти з графіком і категоріями для App Store Ads
+- Акцент на простоту і швидкість, не на кількість фіч
