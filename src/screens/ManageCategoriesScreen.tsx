@@ -32,18 +32,8 @@ export function ManageCategoriesScreen() {
   );
 
   function openAddForm() {
-    if (!isPremium) {
-      const expenseCount = categories.filter((c) => c.type === TransactionType.Expense).length;
-      const incomeCount = categories.filter((c) => c.type === TransactionType.Income).length;
-      const atLimit =
-        expenseCount >= FREE_LIMITS.maxExpenseCategories &&
-        incomeCount >= FREE_LIMITS.maxIncomeCategories;
-
-      if (atLimit) {
-        showPaywall();
-        return;
-      }
-    }
+    // TODO: Restore premium category limit check after products configured
+    // if (!isPremium) { ... showPaywall() ... }
     setEditingCategory(null);
     setFormOpen(true);
   }
@@ -94,19 +84,8 @@ export function ManageCategoriesScreen() {
         updatedAt: new Date().toISOString(),
       });
     } else {
-      // Перевірка ліміту для конкретного типу
-      if (!isPremium) {
-        const count = categories.filter((c) => c.type === input.type).length;
-        const limit = input.type === TransactionType.Expense
-          ? FREE_LIMITS.maxExpenseCategories
-          : FREE_LIMITS.maxIncomeCategories;
-
-        if (count >= limit) {
-          showPaywall();
-          closeForm();
-          return;
-        }
-      }
+      // TODO: Restore premium category limit check after products configured
+      // if (!isPremium) { ... showPaywall() ... }
 
       addCategory({
         id: `${Date.now()}`,

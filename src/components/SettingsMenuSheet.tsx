@@ -54,6 +54,7 @@ export function SettingsMenuSheet({
           <View style={styles.grabber} />
           <Text style={styles.title}>{translations.settings.title}</Text>
 
+          {/* TODO: Restore sync banner after auth is ready
           {!isLoggedIn && (
             <Pressable style={styles.syncBanner} onPress={onAccountPress}>
               <Ionicons name="cloud-upload-outline" size={18} color="#007AFF" />
@@ -61,6 +62,7 @@ export function SettingsMenuSheet({
               <Ionicons name="chevron-forward" size={14} color="#007AFF" />
             </Pressable>
           )}
+          */}
 
           <View style={styles.section}>
             <Text style={styles.label}>{translations.settings.trackingMode}</Text>
@@ -115,6 +117,7 @@ export function SettingsMenuSheet({
               <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
             </Pressable>
 
+            {/* TODO: Restore Account settings button after auth is ready
             <Pressable style={styles.listItem} onPress={onAccountPress}>
               <View style={styles.listItemLeft}>
                 <Ionicons
@@ -131,6 +134,7 @@ export function SettingsMenuSheet({
               </View>
               <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
             </Pressable>
+            */}
           </View>
         </Pressable>
       </Pressable>

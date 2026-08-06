@@ -243,11 +243,12 @@ export function HomeScreen() {
 
   function openAccountSettings() {
     setSettingsMenuOpen(false);
-    if (authUserEmail) {
-      setAccountModalOpen(true);
-      return;
-    }
-    router.push('/auth');
+    // TODO: Restore auth navigation after review
+    // if (authUserEmail) {
+    //   setAccountModalOpen(true);
+    //   return;
+    // }
+    // router.push('/auth');
   }
 
   async function handleLogOut() {
@@ -362,12 +363,10 @@ export function HomeScreen() {
         onTrackingModeChange={handleTrackingModeChange}
         onManageCategoriesPress={openManageCategories}
         onAccountPress={openAccountSettings}
-        onPremiumPress={() => {
-          setSettingsMenuOpen(false);
-          showPaywall();
-        }}
-        isPremium={isPremium}
-        authUserEmail={authUserEmail}
+        // TODO: Restore onPremiumPress and premium/account UI after products configured
+        onPremiumPress={() => {}}
+        isPremium
+        authUserEmail={null}
       />
       <ConfirmModal
         visible={isAccountModalOpen}
@@ -412,12 +411,9 @@ export function HomeScreen() {
       />
       <StickyAddBar
         onAddPress={() => setAddTransactionModalOpen(true)}
+        // TODO: Restore premium check and voice input after review
         onMicPress={() => {
-          if (isPremium) {
-            Alert.alert(translations.alerts.voiceInput.title, translations.alerts.voiceInput.message);
-          } else {
-            showPaywall();
-          }
+          Alert.alert('Voice Input', 'Voice input is coming soon in the next update.');
         }}
       />
     </View>

@@ -56,11 +56,13 @@ export function TopBalanceSection({
 
       <View style={styles.balanceRow}>
         <Text style={styles.balance}>{balanceLabel}</Text>
+        {/* TODO: Restore + button after premium purchase flow is ready
         <View style={styles.balanceActions}>
           <View style={styles.plusButton}>
             <Text style={styles.plusText}>+</Text>
           </View>
         </View>
+        */}
       </View>
 
       <View style={styles.statsRow}>

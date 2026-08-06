@@ -26,9 +26,11 @@ export function StickyAddBar({
           <Pressable style={styles.button} onPress={onAddPress}>
             <Ionicons name="add" size={20} color={colors.cardBackground} />
           </Pressable>
+          {/* TODO: Restore mic button after voice input is ready
           <Pressable style={styles.micButton} onPress={onMicPress}>
             <Ionicons name="mic" size={34} color={colors.textPrimary} />
           </Pressable>
+          */}
         </View>
       </View>
     </View>
