@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/HoTaBu4/Finly/compare/v1.2.1...v1.2.2) (2026-08-06)
+
+
+### Bug Fixes
+
+* add a temporary fix for a review ([b364c75](https://github.com/HoTaBu4/Finly/commit/b364c753334daf81c2f57370c7c3682ecd072203))
+* update the version ([dddd220](https://github.com/HoTaBu4/Finly/commit/dddd220797815e4213313805e82a4c09dfc4332e))
+
 ### [1.2.1](https://github.com/HoTaBu4/Finly/compare/v1.2.0...v1.2.1) (2026-08-05)
 
 
