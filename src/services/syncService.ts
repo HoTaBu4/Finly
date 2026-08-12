@@ -1,4 +1,4 @@
-import Purchases from 'react-native-purchases';
+// import Purchases from 'react-native-purchases';
 import { getSupabaseClient } from './supabaseClient';
 import { useFinanceData } from '../state/FinanceDataContext';
 import { CategoryItem, HistoryTransaction } from '../types';
@@ -8,8 +8,8 @@ import { CategoryItem, HistoryTransaction } from '../types';
  * Links RevenueCat to Supabase user and syncs data.
  */
 export async function onAuthComplete(userId: string) {
-  // Link RevenueCat to this user
-  await Purchases.logIn(userId);
+  // TODO: Re-enable when RevenueCat is configured
+  // await Purchases.logIn(userId);
 }
 
 /**

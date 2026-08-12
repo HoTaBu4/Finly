@@ -16,13 +16,12 @@ export const usePremium = create<PremiumState>()(
       setPremium: (value) => set({ isPremium: value }),
 
       syncPremiumStatus: async () => {
-        try {
-          const { checkPremiumStatus } = await import('../services/revenueCat');
-          const isPremium = await checkPremiumStatus();
-          set({ isPremium });
-        } catch {
-          // RevenueCat not configured yet — keep current state
-        }
+        // TODO: Re-enable when react-native-purchases is installed
+        // try {
+        //   const { checkPremiumStatus } = await import('../services/revenueCat');
+        //   const isPremium = await checkPremiumStatus();
+        //   set({ isPremium });
+        // } catch {}
       },
     }),
     {
