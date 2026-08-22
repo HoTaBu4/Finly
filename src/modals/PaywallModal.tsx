@@ -8,6 +8,7 @@ type PlanOption = 'yearly' | 'monthly';
 
 type PaywallModalProps = {
   visible: boolean;
+  isOffline?: boolean;
   onClose: () => void;
   onPurchasePress: (plan: PlanOption) => void;
 };
@@ -15,25 +16,25 @@ type PaywallModalProps = {
 const FEATURES = [
   {
     icon: 'lock-closed' as const,
-    color: '#34C759',
+    color: colors.positiveBright,
     title: translations.paywall.features.categoryLimit.title,
     description: translations.paywall.features.categoryLimit.description,
   },
   {
     icon: 'notifications' as const,
-    color: '#FF9500',
+    color: colors.attention,
     title: translations.paywall.features.voiceInput.title,
     description: translations.paywall.features.voiceInput.description,
   },
   {
     icon: 'star' as const,
-    color: '#007AFF',
+    color: colors.accentSecondary,
     title: translations.paywall.features.expenseTracking.title,
     description: translations.paywall.features.expenseTracking.description,
   },
 ];
 
-export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModalProps) {
+export function PaywallModal({ visible, isOffline = false, onClose, onPurchasePress }: PaywallModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<PlanOption>('yearly');
 
   function handleContinue() {
@@ -51,9 +52,18 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
           <Ionicons name="close" size={24} color={colors.textSecondary} />
         </Pressable>
 
+        {isOffline && (
+          <View style={styles.offlineBanner}>
+            <Ionicons name="cloud-offline-outline" size={16} color={colors.warningBannerText} />
+            <Text style={styles.offlineBannerText}>
+              {translations.alerts.noInternet.message}
+            </Text>
+          </View>
+        )}
+
         <View style={styles.iconContainer}>
           <View style={styles.appIcon}>
-            <Ionicons name="wallet" size={40} color="#fff" />
+            <Ionicons name="wallet" size={40} color={colors.cardBackground} />
           </View>
         </View>
 
@@ -64,7 +74,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
           {FEATURES.map((feature) => (
             <View key={feature.title} style={styles.featureRow}>
               <View style={[styles.featureIconWrap, { backgroundColor: feature.color }]}>
-                <Ionicons name={feature.icon} size={16} color="#fff" />
+                <Ionicons name={feature.icon} size={16} color={colors.cardBackground} />
               </View>
               <View style={styles.featureTextWrap}>
                 <Text style={styles.featureTitle}>{feature.title}</Text>
@@ -87,7 +97,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
             <View style={styles.planHeader}>
               <Text style={styles.planName}>{translations.paywall.plans.yearly.name}</Text>
               {selectedPlan === 'yearly' && (
-                <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
+                <Ionicons name="checkmark-circle" size={22} color={colors.accentSecondary} />
               )}
               {selectedPlan !== 'yearly' && (
                 <Ionicons name="ellipse-outline" size={22} color={colors.textSecondary} />
@@ -104,7 +114,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
             <View style={styles.planHeader}>
               <Text style={styles.planName}>{translations.paywall.plans.monthly.name}</Text>
               {selectedPlan === 'monthly' && (
-                <Ionicons name="checkmark-circle" size={22} color="#007AFF" />
+                <Ionicons name="checkmark-circle" size={22} color={colors.accentSecondary} />
               )}
               {selectedPlan !== 'monthly' && (
                 <Ionicons name="ellipse-outline" size={22} color={colors.textSecondary} />
@@ -138,7 +148,7 @@ export function PaywallModal({ visible, onClose, onPurchasePress }: PaywallModal
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.cardBackground,
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 34,
@@ -150,6 +160,22 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 4,
   },
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: colors.warningBannerBackground,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+  },
+  offlineBannerText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.warningBannerText,
+    flex: 1,
+  },
   iconContainer: {
     alignItems: 'center',
     marginTop: 20,
@@ -159,14 +185,14 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 18,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surfaceDark,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#1a1a1a',
+    color: colors.textPrimary,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -181,7 +207,7 @@ const styles = StyleSheet.create({
     top: 16,
     bottom: 16,
     width: 3,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: colors.positiveSoft,
     borderRadius: 2,
   },
   featureRow: {
@@ -202,12 +228,12 @@ const styles = StyleSheet.create({
   featureTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   featureDescription: {
     fontSize: 13,
-    color: '#666',
+    color: colors.textDescription,
     lineHeight: 18,
   },
   spacer: {
@@ -222,26 +248,26 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: '#E0E0E0',
+    borderColor: colors.borderMedium,
     padding: 14,
     paddingTop: 18,
     position: 'relative',
   },
   planCardSelected: {
-    borderColor: '#007AFF',
-    backgroundColor: '#F5F9FF',
+    borderColor: colors.accentSecondary,
+    backgroundColor: colors.accentSecondarySoft,
   },
   planBadge: {
     position: 'absolute',
     top: -10,
     left: 12,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.accentSecondary,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
   planBadgeText: {
-    color: '#fff',
+    color: colors.cardBackground,
     fontSize: 10,
     fontWeight: '700',
   },
@@ -254,20 +280,20 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: colors.textPrimary,
   },
   planPrice: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   planSubtext: {
     fontSize: 12,
-    color: '#888',
+    color: colors.textMuted,
   },
   continueButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.accentSecondary,
     borderRadius: 14,
     height: 52,
     alignItems: 'center',
@@ -275,7 +301,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   continueButtonText: {
-    color: '#fff',
+    color: colors.cardBackground,
     fontSize: 17,
     fontWeight: '700',
   },
@@ -286,6 +312,6 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     fontSize: 13,
-    color: '#007AFF',
+    color: colors.accentSecondary,
   },
 });
