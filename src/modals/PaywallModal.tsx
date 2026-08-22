@@ -152,6 +152,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 60,
     paddingBottom: 34,
+    maxWidth: 500,
+    alignSelf: 'center',
+    width: '100%',
   },
   closeButton: {
     position: 'absolute',

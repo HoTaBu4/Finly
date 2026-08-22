@@ -4,6 +4,7 @@ import { colors } from '../theme/colors';
 import { translations } from '../translations';
 import { HistoryTransactionFilter, TrackingMode } from '../types';
 import { formatMoney } from '../utils/formatters';
+import { useResponsive } from '../hooks/useResponsive';
 import { StatCard } from './StatCard';
 
 type TopBalanceSectionProps = {
@@ -29,6 +30,7 @@ export function TopBalanceSection({
   expenseAmount = 0,
   incomeAmount = 0,
 }: TopBalanceSectionProps) {
+  const { sp } = useResponsive();
   const isBothMode = trackingMode === TrackingMode.Both;
   const isExpenseActive = activeFilter === HistoryTransactionFilter.Expense;
   const isIncomeActive = activeFilter === HistoryTransactionFilter.Income;
@@ -43,19 +45,19 @@ export function TopBalanceSection({
   return (
     <View style={styles.panel}>
       <View style={styles.labelRow}>
-        <Text style={styles.label}>{translations.topBalance.balance}</Text>
+        <Text style={[styles.label, { fontSize: sp(18) }]}>{translations.topBalance.balance}</Text>
         <Pressable
           style={styles.settingsButton}
           onPress={onSettingsPress}
           accessibilityRole="button"
           accessibilityLabel={translations.topBalance.openSettings}
         >
-          <Ionicons name="settings-outline" size={18} color={colors.textPrimary} />
+          <Ionicons name="settings-outline" size={sp(18)} color={colors.textPrimary} />
         </Pressable>
       </View>
 
       <View style={styles.balanceRow}>
-        <Text style={styles.balance}>{balanceLabel}</Text>
+        <Text style={[styles.balance, { fontSize: sp(42) }]}>{balanceLabel}</Text>
         {/* TODO: Restore + button after premium purchase flow is ready
         <View style={styles.balanceActions}>
           <View style={styles.plusButton}>

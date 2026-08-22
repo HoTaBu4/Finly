@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../../theme/colors';
 import { translations } from '../../translations';
+import { useResponsive } from '../../hooks/useResponsive';
 import { HistoryTransaction, TransactionType } from '../../types';
 import { formatDate, formatMoney } from '../../utils/formatters';
 
@@ -44,6 +45,7 @@ export function TransactionRow({
   onOpen,
   onClose,
 }: TransactionRowProps) {
+  const { sp } = useResponsive();
   const hasActions = Boolean(onEdit || onDelete);
   const actionsWidth = getActionsWidth(Boolean(onEdit), Boolean(onDelete));
   const [containerWidth, setContainerWidth] = useState(0);
@@ -161,12 +163,13 @@ export function TransactionRow({
   const rowContent = (
     <View style={styles.row}>
       <View style={styles.rowLeft}>
-        <Text style={styles.categoryText}>{categoryLabel}</Text>
-        <Text style={styles.dateText}>{formatDate(item.date)}</Text>
+        <Text style={[styles.categoryText, { fontSize: sp(14) }]}>{categoryLabel}</Text>
+        <Text style={[styles.dateText, { fontSize: sp(12) }]}>{formatDate(item.date)}</Text>
       </View>
       <Text
         style={[
           styles.amountText,
+          { fontSize: sp(13) },
           item.type === TransactionType.Income ? styles.incomeText : styles.expenseText,
         ]}
       >

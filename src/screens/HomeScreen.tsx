@@ -23,6 +23,7 @@ import { useFinanceData } from '../state/FinanceDataContext';
 import { usePremium } from '../state/usePremium';
 import { usePaywall } from '../hooks/usePaywall';
 import { useDeepLinkTransaction } from '../hooks/useDeepLinkTransaction';
+import { useResponsive } from '../hooks/useResponsive';
 import { colors } from '../theme/colors';
 import { translations } from '../translations';
 import {
@@ -46,6 +47,7 @@ export function HomeScreen() {
   const { isOfflinePaywallVisible, showPaywall, handleOfflinePurchaseAttempt, closeOfflinePaywall } = usePaywall();
 
   useDeepLinkTransaction();
+  const { sp } = useResponsive();
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isLimitModalOpen, setLimitModalOpen] = useState(false);
   const [isAddTransactionModalOpen, setAddTransactionModalOpen] = useState(false);
@@ -309,9 +311,9 @@ export function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel={translations.dateRange.choosePeriod}
           >
-            <Ionicons name="calendar-outline" size={16} color={colors.accentPrimary} />
-            <Text style={styles.periodFilterText}>{dateRangeLabel}</Text>
-            <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
+            <Ionicons name="calendar-outline" size={sp(16)} color={colors.accentPrimary} />
+            <Text style={[styles.periodFilterText, { fontSize: sp(14) }]}>{dateRangeLabel}</Text>
+            <Ionicons name="chevron-down" size={sp(16)} color={colors.textSecondary} />
           </Pressable>
         </View>
         <View style={styles.chartSection}>

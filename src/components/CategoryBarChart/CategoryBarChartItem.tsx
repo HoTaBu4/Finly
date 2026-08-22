@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../theme/colors';
+import { useResponsive } from '../../hooks/useResponsive';
 import { CategoryIconKey } from '../../types';
 import { CategoryBarLimitLayer } from './CategoryBarLimitLayer';
 import { buildBarVisualState } from './categoryBarChartItem.utils';
@@ -43,6 +44,7 @@ export function CategoryBarChartItem({
   isBlurred = false,
   onPress,
 }: CategoryBarChartItemProps) {
+  const { sp } = useResponsive();
   const selectionAnim = useRef(new Animated.Value(isSelected ? 1 : 0)).current;
   const blurAnim = useRef(new Animated.Value(isBlurred ? 1 : 0)).current;
 
@@ -138,12 +140,12 @@ export function CategoryBarChartItem({
               pointerEvents="none"
             >
               <Text
-                style={styles.infoChipText}
+                style={[styles.infoChipText, { fontSize: sp(9), lineHeight: sp(11) }]}
               >
                 {infoChipLabel}
               </Text>
               {infoChipOverLabel ? (
-                <Text style={[styles.infoChipText, styles.infoChipTextOver]}>
+                <Text style={[styles.infoChipText, styles.infoChipTextOver, { fontSize: sp(9), lineHeight: sp(11) }]}>
                   {infoChipOverLabel}
                 </Text>
               ) : null}
@@ -162,15 +164,15 @@ export function CategoryBarChartItem({
           />
         </View>
         <View style={styles.metaRow}>
-          <View style={styles.iconWrap}>
+          <View style={[styles.iconWrap, { width: sp(22), height: sp(22), borderRadius: sp(11) }]}>
             <Ionicons
               name={iconName}
-              size={20}
+              size={sp(20)}
               color={colors.textPrimary}
             />
           </View>
           <Text
-            style={styles.amountText}
+            style={[styles.amountText, { fontSize: sp(9), lineHeight: sp(12) }]}
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.75}
@@ -180,7 +182,7 @@ export function CategoryBarChartItem({
           {showTinyOverIndicator ? (
             <View style={styles.tinyOverRow}>
               <View style={styles.tinyOverDot} />
-              <Text style={styles.tinyOverText}>{tinyOverLabel}</Text>
+              <Text style={[styles.tinyOverText, { fontSize: sp(8), lineHeight: sp(10) }]}>{tinyOverLabel}</Text>
             </View>
           ) : null}
         </View>

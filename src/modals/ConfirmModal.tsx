@@ -89,6 +89,9 @@ const styles = StyleSheet.create({
     borderColor: colors.panelBorder,
     padding: 18,
     gap: 10,
+    maxWidth: 400,
+    alignSelf: 'center',
+    width: '100%',
   },
   header: {
     flexDirection: 'row',

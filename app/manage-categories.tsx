@@ -1,12 +1,15 @@
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ManageCategoriesScreen } from '../src/screens/ManageCategoriesScreen';
+import { TabletContainer } from '../src/components/TabletContainer';
 import { colors } from '../src/theme/colors';
 
 export default function ManageCategoriesPage() {
   return (
     <SafeAreaView style={styles.container}>
-      <ManageCategoriesScreen />
+      <TabletContainer>
+        <ManageCategoriesScreen />
+      </TabletContainer>
     </SafeAreaView>
   );
 }

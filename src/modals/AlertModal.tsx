@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: 'center',
     gap: 12,
+    maxWidth: 400,
+    alignSelf: 'center',
+    width: '100%',
   },
   iconWrap: {
     width: 56,

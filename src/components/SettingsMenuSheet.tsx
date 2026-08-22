@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import { translations } from '../translations';
+import { useResponsive } from '../hooks/useResponsive';
 import { TrackingMode } from '../types';
 
 type SettingsMenuSheetProps = {
@@ -37,6 +38,7 @@ export function SettingsMenuSheet({
   isPremium,
   authUserEmail,
 }: SettingsMenuSheetProps) {
+  const { sp } = useResponsive();
   const isLoggedIn = Boolean(authUserEmail);
 
   return (
@@ -48,11 +50,11 @@ export function SettingsMenuSheet({
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable
-          style={styles.sheet}
+          style={[styles.sheet, { paddingHorizontal: sp(16), paddingBottom: sp(28), gap: sp(12) }]}
           onPress={(event) => event.stopPropagation()}
         >
           <View style={styles.grabber} />
-          <Text style={styles.title}>{translations.settings.title}</Text>
+          <Text style={[styles.title, { fontSize: sp(18) }]}>{translations.settings.title}</Text>
 
           {/* TODO: Restore sync banner after auth is ready
           {!isLoggedIn && (
@@ -65,21 +67,21 @@ export function SettingsMenuSheet({
           */}
 
           <View style={styles.section}>
-            <Text style={styles.label}>{translations.settings.trackingMode}</Text>
+            <Text style={[styles.label, { fontSize: sp(12) }]}>{translations.settings.trackingMode}</Text>
             <View style={styles.toggleRow}>
               {TRACKING_OPTIONS.map((option) => {
                 const isActive = option.value === trackingMode;
                 return (
                   <Pressable
                     key={option.value}
-                    style={[styles.toggleButton, isActive && styles.toggleButtonActive]}
+                    style={[styles.toggleButton, isActive && styles.toggleButtonActive, { paddingVertical: sp(8), paddingHorizontal: sp(12) }]}
                     onPress={() => onTrackingModeChange(option.value)}
                     accessibilityRole="button"
                     accessibilityLabel={translations.settings.trackingModeAccessibility(option.label)}
                     accessibilityState={{ selected: isActive }}
                   >
                     <Text
-                      style={[styles.toggleText, isActive && styles.toggleTextActive]}
+                      style={[styles.toggleText, isActive && styles.toggleTextActive, { fontSize: sp(13) }]}
                     >
                       {option.label}
                     </Text>
@@ -91,30 +93,30 @@ export function SettingsMenuSheet({
 
           <View style={styles.listWrap}>
             {!isPremium && (
-              <Pressable style={styles.premiumItem} onPress={onPremiumPress}>
+              <Pressable style={[styles.premiumItem, { minHeight: sp(46) }]} onPress={onPremiumPress}>
                 <View style={styles.listItemLeft}>
-                  <Ionicons name="diamond" size={18} color="#007AFF" />
-                  <Text style={styles.premiumText}>{translations.settings.getPremium}</Text>
+                  <Ionicons name="diamond" size={sp(18)} color="#007AFF" />
+                  <Text style={[styles.premiumText, { fontSize: sp(14) }]}>{translations.settings.getPremium}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={16} color="#007AFF" />
+                <Ionicons name="chevron-forward" size={sp(16)} color="#007AFF" />
               </Pressable>
             )}
             {isPremium && (
-              <View style={styles.premiumActiveItem}>
+              <View style={[styles.premiumActiveItem, { minHeight: sp(46) }]}>
                 <View style={styles.listItemLeft}>
-                  <Ionicons name="diamond" size={18} color="#34C759" />
-                  <Text style={styles.premiumActiveText}>{translations.settings.premiumActive}</Text>
+                  <Ionicons name="diamond" size={sp(18)} color="#34C759" />
+                  <Text style={[styles.premiumActiveText, { fontSize: sp(14) }]}>{translations.settings.premiumActive}</Text>
                 </View>
-                <Ionicons name="checkmark-circle" size={18} color="#34C759" />
+                <Ionicons name="checkmark-circle" size={sp(18)} color="#34C759" />
               </View>
             )}
 
-            <Pressable style={styles.listItem} onPress={onManageCategoriesPress}>
+            <Pressable style={[styles.listItem, { minHeight: sp(46) }]} onPress={onManageCategoriesPress}>
               <View style={styles.listItemLeft}>
-                <Ionicons name="grid-outline" size={18} color={colors.textPrimary} />
-                <Text style={styles.listText}>{translations.settings.manageCategories}</Text>
+                <Ionicons name="grid-outline" size={sp(18)} color={colors.textPrimary} />
+                <Text style={[styles.listText, { fontSize: sp(14) }]}>{translations.settings.manageCategories}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={colors.textSecondary} />
+              <Ionicons name="chevron-forward" size={sp(16)} color={colors.textSecondary} />
             </Pressable>
 
             {/* TODO: Restore Account settings button after auth is ready
@@ -160,6 +162,9 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderColor: colors.panelBorder,
     gap: 12,
+    maxWidth: 600,
+    alignSelf: 'center',
+    width: '100%',
   },
   grabber: {
     alignSelf: 'center',

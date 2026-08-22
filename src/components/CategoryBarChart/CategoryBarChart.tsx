@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { CategoryBarChartColumn } from './CategoryBarChartColumn';
 import { colors } from '../../theme/colors';
+import { TABLET_BREAKPOINT } from '../../constants/layout';
 import { CategoryChartItem, TransactionType } from '../../types';
 
 type CategoryBarChartProps = {
@@ -11,7 +12,8 @@ type CategoryBarChartProps = {
 };
 
 const MAX_VISIBLE_WITHOUT_SCROLL = 5;
-const CHART_HEIGHT = 300;
+const CHART_HEIGHT_PHONE = 300;
+const CHART_HEIGHT_TABLET = 480;
 const BAR_MIN_WIDTH = 28;
 const BAR_MAX_WIDTH = 72;
 const STATIC_BAR_MAX_WIDTH = 140;
@@ -32,6 +34,9 @@ export function CategoryBarChart({
   selectedItemId = null,
   onSelectionChange,
 }: CategoryBarChartProps) {
+  const { width: screenWidth } = useWindowDimensions();
+  const isTablet = Math.min(screenWidth) >= TABLET_BREAKPOINT;
+  const chartHeight = isTablet ? CHART_HEIGHT_TABLET : CHART_HEIGHT_PHONE;
   const [containerWidth, setContainerWidth] = useState(0);
   const maxValue = Math.max(
     ...items.map((item) => item.amount),
@@ -123,7 +128,7 @@ export function CategoryBarChart({
 
   return (
     <View
-      style={[styles.chartBox, { height: CHART_HEIGHT }]}
+      style={[styles.chartBox, { height: chartHeight }]}
       onLayout={({ nativeEvent }) => {
         const nextWidth = Math.round(nativeEvent.layout.width);
         setContainerWidth((prevWidth) => (prevWidth === nextWidth ? prevWidth : nextWidth));

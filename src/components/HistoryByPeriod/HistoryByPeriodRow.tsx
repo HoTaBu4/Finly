@@ -4,6 +4,7 @@ import { colors } from '../../theme/colors';
 import { translations } from '../../translations';
 import { formatMonth } from '../../utils/formatters';
 import { toTransactionType } from '../../utils/transactionFilters';
+import { useResponsive } from '../../hooks/useResponsive';
 import {
   CategoryItem,
   HistoryTransaction,
@@ -51,6 +52,7 @@ export function HistoryByPeriod({
   onTransactionEdit,
   onTransactionDelete,
 }: HistoryByPeriodProps) {
+  const { sp } = useResponsive();
   const historyTitle = selectedCategory
     ? translations.history.categoryTitle(selectedCategory.category)
     : title;
@@ -150,7 +152,7 @@ export function HistoryByPeriod({
   return (
     <View style={styles.container} onTouchStart={closeOpenedRow}>
       <View style={styles.titleRow}>
-        <Text style={styles.title}>{historyTitle}</Text>
+        <Text style={[styles.title, { fontSize: sp(20) }]}>{historyTitle}</Text>
         {historyActionLabel && onActionPress ? (
           <Pressable style={styles.limitButton} onPress={onActionPress}>
             <Text style={styles.limitButtonText}>{historyActionLabel}</Text>
@@ -164,9 +166,9 @@ export function HistoryByPeriod({
         sections.map((section) => (
           <View key={section.key} style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{section.label}</Text>
+              <Text style={[styles.sectionTitle, { fontSize: sp(14) }]}>{section.label}</Text>
               {section.year ? (
-                <Text style={styles.sectionYear}>{section.year}</Text>
+                <Text style={[styles.sectionYear, { fontSize: sp(12) }]}>{section.year}</Text>
               ) : null}
             </View>
 
