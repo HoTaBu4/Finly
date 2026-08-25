@@ -11,11 +11,11 @@ module.exports = ({ config }) => ({
   name: 'Finzelo',
   slug: 'trackfin',
   scheme: 'finzelo',
-  version: '1.2.6',
+  version: '1.2.7',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
-  newArchEnabled: true,
+  newArchEnabled: false,
   splash: {
     image: './assets/splash-icon.png',
     resizeMode: 'contain',
