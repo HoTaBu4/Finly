@@ -38,7 +38,19 @@ module.exports = ({ config }) => ({
   web: {
     favicon: './assets/favicon.png',
   },
-  plugins: ['expo-router'],
+  plugins: [
+    'expo-router',
+    [
+      'expo-font',
+      {
+        ios: {
+          fonts: [
+            './node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf',
+          ],
+        },
+      },
+    ],
+  ],
   extra: {
     eas: {
       projectId: '97f4871a-03e3-4ffa-a9ee-b4d1f0ea9f16',
