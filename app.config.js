@@ -11,7 +11,7 @@ module.exports = ({ config }) => ({
   name: 'Finzelo',
   slug: 'trackfin',
   scheme: 'finzelo',
-  version: '1.2.7',
+  version: '1.2.8',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
