@@ -59,9 +59,9 @@ export function SettingsMenuSheet({
           {/* TODO: Restore sync banner after auth is ready
           {!isLoggedIn && (
             <Pressable style={styles.syncBanner} onPress={onAccountPress}>
-              <Ionicons name="cloud-upload-outline" size={18} color="#007AFF" />
+              <Ionicons name="cloud-upload-outline" size={18} color={colors.accentSecondary} />
               <Text style={styles.syncBannerText}>{translations.settings.syncBanner}</Text>
-              <Ionicons name="chevron-forward" size={14} color="#007AFF" />
+              <Ionicons name="chevron-forward" size={14} color={colors.accentSecondary} />
             </Pressable>
           )}
           */}
@@ -95,19 +95,19 @@ export function SettingsMenuSheet({
             {!isPremium && (
               <Pressable style={[styles.premiumItem, { minHeight: sp(46) }]} onPress={onPremiumPress}>
                 <View style={styles.listItemLeft}>
-                  <Ionicons name="diamond" size={sp(18)} color="#007AFF" />
+                  <Ionicons name="diamond" size={sp(18)} color={colors.accentSecondary} />
                   <Text style={[styles.premiumText, { fontSize: sp(14) }]}>{translations.settings.getPremium}</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={sp(16)} color="#007AFF" />
+                <Ionicons name="chevron-forward" size={sp(16)} color={colors.accentSecondary} />
               </Pressable>
             )}
             {isPremium && (
               <View style={[styles.premiumActiveItem, { minHeight: sp(46) }]}>
                 <View style={styles.listItemLeft}>
-                  <Ionicons name="diamond" size={sp(18)} color="#34C759" />
+                  <Ionicons name="diamond" size={sp(18)} color={colors.positiveBright} />
                   <Text style={[styles.premiumActiveText, { fontSize: sp(14) }]}>{translations.settings.premiumActive}</Text>
                 </View>
-                <Ionicons name="checkmark-circle" size={sp(18)} color="#34C759" />
+                <Ionicons name="checkmark-circle" size={sp(18)} color={colors.positiveBright} />
               </View>
             )}
 
@@ -185,13 +185,13 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 10,
-    backgroundColor: '#F0F7FF',
+    backgroundColor: colors.infoBannerBackground,
   },
   syncBannerText: {
     flex: 1,
     fontSize: 13,
     fontWeight: '600',
-    color: '#007AFF',
+    color: colors.accentSecondary,
   },
   section: {
     gap: 8,
@@ -263,14 +263,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    backgroundColor: '#F0F7FF',
+    backgroundColor: colors.infoBannerBackground,
     borderBottomWidth: 1,
     borderBottomColor: colors.panelBorder,
   },
   premiumText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#007AFF',
+    color: colors.accentSecondary,
   },
   premiumActiveItem: {
     minHeight: 46,
@@ -278,13 +278,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    backgroundColor: '#F0FFF4',
+    backgroundColor: colors.positiveBannerBackground,
     borderBottomWidth: 1,
     borderBottomColor: colors.panelBorder,
   },
   premiumActiveText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#34C759',
+    color: colors.positiveBright,
   },
 });

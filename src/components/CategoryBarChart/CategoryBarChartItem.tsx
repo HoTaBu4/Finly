@@ -25,10 +25,10 @@ const META_BLOCK_HEIGHT = 52;
 const BAR_TOP_HEADROOM = 34;
 const BAR_BODY_RADIUS = 6;
 const LIMIT_PALETTE = {
-  guideBackground: 'rgba(123, 108, 255, 0.14)',
-  guideBorder: 'rgba(123, 108, 255, 0.24)',
-  guideStripe: 'rgba(123, 108, 255, 0.22)',
-  overLimitSolid: '#de7474',
+  guideBackground: colors.limitGuideBackground,
+  guideBorder: colors.limitGuideBorder,
+  guideStripe: colors.limitGuideStripe,
+  overLimitSolid: colors.overLimit,
 };
 
 export function CategoryBarChartItem({
@@ -251,12 +251,12 @@ const styles = StyleSheet.create({
     width: 5,
     height: 5,
     borderRadius: 2.5,
-    backgroundColor: '#de7474',
+    backgroundColor: colors.overLimit,
   },
   tinyOverText: {
     fontSize: 8,
     lineHeight: 10,
-    color: '#d15a5a',
+    color: colors.overLimitText,
     fontWeight: '700',
   },
   bar: {
@@ -290,12 +290,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   infoChipTextOver: {
-    color: '#d15a5a',
+    color: colors.overLimitText,
     marginTop: 1,
   },
   blurMask: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(242, 242, 249, 0.62)',
+    backgroundColor: colors.chartBlurMaskStrong,
     borderRadius: 8,
   },
 });

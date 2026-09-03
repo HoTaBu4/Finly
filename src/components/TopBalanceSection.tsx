@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    backgroundColor: 'rgba(123, 108, 255, 0.03)',
+    backgroundColor: colors.accentPrimaryFaint,
     minWidth: 74,
     alignItems: 'center',
     justifyContent: 'center',

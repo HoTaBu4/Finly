@@ -131,6 +131,6 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#ffffff',
+    color: colors.textOnAccent,
   },
 });
