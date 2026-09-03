@@ -108,7 +108,10 @@ export function HomeScreen() {
       ),
     [filteredHistoryItems]
   );
-  const balanceAmount = periodTotals.income - periodTotals.expense;
+  const balanceAmount =
+    trackingMode === TrackingMode.ExpensesOnly
+      ? -periodTotals.expense
+      : periodTotals.income - periodTotals.expense;
 
   const chartItems = useMemo<CategoryChartItem[]>(
     () =>

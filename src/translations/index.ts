@@ -125,7 +125,7 @@ const en = {
     },
   },
   categorySelect: {
-    empty: 'No categories yet',
+    empty: 'No categories',
     expenseCategories: 'Expense categories',
     incomeCategories: 'Income categories',
     placeholder: 'Select category',
