@@ -42,7 +42,7 @@ function getMonthDays(viewDate: Date) {
     date.setDate(gridStart.getDate() + index);
 
     return {
-      key: date.toISOString(),
+      key: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
       date,
       isCurrentMonth: date.getMonth() === viewDate.getMonth(),
     };
@@ -440,7 +440,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   weekdayText: {
-    width: `${100 / 7}%`,
+    flexBasis: '14.2857%',
+    flexGrow: 1,
+    flexShrink: 0,
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '700',
@@ -452,7 +454,9 @@ const styles = StyleSheet.create({
     rowGap: 6,
   },
   dayCell: {
-    width: `${100 / 7}%`,
+    flexBasis: '14.2857%',
+    flexGrow: 1,
+    flexShrink: 0,
     height: 36,
     borderRadius: 12,
     alignItems: 'center',
