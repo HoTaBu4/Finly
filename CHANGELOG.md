@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.9](https://github.com/HoTaBu4/Finly/compare/v1.2.6...v1.2.9) (2026-09-15)
+
+
+### Bug Fixes
+
+* added a break point for a tablet ([f2bafa3](https://github.com/HoTaBu4/Finly/commit/f2bafa352d834f60dc15d21361d977074f8e139c))
+* android build ([d27ae63](https://github.com/HoTaBu4/Finly/commit/d27ae6309f61674d17fbc6d0c19c4a604cd49eea))
+* calendar ([8a960dc](https://github.com/HoTaBu4/Finly/commit/8a960dca3e1fc5217417a31a59e4d4846ded8e61))
+* disable newarch ([e02f702](https://github.com/HoTaBu4/Finly/commit/e02f702f285a03665b3c91e49f39d1d438d28ad8))
+* error ([f71ea5f](https://github.com/HoTaBu4/Finly/commit/f71ea5f2a5f92c5febe3085670a0848a2537b96f))
+* ui ([1a35f8a](https://github.com/HoTaBu4/Finly/commit/1a35f8a2fd9d1b75c8ecd798f153eaf53da417c6))
+* update package json ([352d12d](https://github.com/HoTaBu4/Finly/commit/352d12d713191cd7c5aec50004fb280b63737244))
+
 ### [1.2.6](https://github.com/HoTaBu4/Finly/compare/v1.2.5...v1.2.6) (2026-08-22)
 
 ### [1.2.5](https://github.com/HoTaBu4/Finly/compare/v1.2.4...v1.2.5) (2026-08-22)
