@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
+  Keyboard,
   Modal,
   Pressable,
   StyleSheet,
@@ -34,6 +35,7 @@ export function AddTransactionModal({
 }: AddTransactionModalProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [amountInput, setAmountInput] = useState('');
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
     if (!visible) {
@@ -43,6 +45,20 @@ export function AddTransactionModal({
     setAmountInput('');
     setSelectedCategoryId(categories[0]?.id ?? null);
   }, [visible]);
+
+  useEffect(() => {
+    const showListener = Keyboard.addListener('keyboardDidShow', (event) => {
+      setKeyboardHeight(event.endCoordinates.height);
+    });
+    const hideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
 
   const categoryById = useMemo(
     () => new Map(categories.map((item) => [item.id, item])),
@@ -84,44 +100,47 @@ export function AddTransactionModal({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
+      <Pressable
+        style={[styles.modalOverlay, keyboardHeight > 0 && { paddingBottom: keyboardHeight + 16 }]}
+        onPress={onClose}
+      >
         <Pressable
           style={styles.modalCard}
           onPress={(event) => event.stopPropagation()}
         >
-          <Text style={styles.modalTitle}>{translations.transactionForm.addTitle}</Text>
-          <Text style={styles.modalSubtitle}>
-            {selectedCategory?.type === TransactionType.Income
-              ? translations.common.income
-              : translations.common.expense}
-          </Text>
+            <Text style={styles.modalTitle}>{translations.transactionForm.addTitle}</Text>
+            <Text style={styles.modalSubtitle}>
+              {selectedCategory?.type === TransactionType.Income
+                ? translations.common.income
+                : translations.common.expense}
+            </Text>
 
-          <Text style={styles.fieldLabel}>{translations.common.category}</Text>
-          <CategorySelectDropdown
-            categories={categories}
-            selectedCategoryId={selectedCategoryId}
-            onCategoryChange={(category) => setSelectedCategoryId(category.id)}
-            visible={visible}
-          />
+            <Text style={styles.fieldLabel}>{translations.common.category}</Text>
+            <CategorySelectDropdown
+              categories={categories}
+              selectedCategoryId={selectedCategoryId}
+              onCategoryChange={(category) => setSelectedCategoryId(category.id)}
+              visible={visible}
+            />
 
-          <Text style={styles.fieldLabel}>{translations.common.amount}</Text>
-          <TextInput
-            style={styles.modalInput}
-            value={amountInput}
-            onChangeText={setAmountInput}
-            placeholder={translations.common.amount}
-            placeholderTextColor={colors.textSecondary}
-            keyboardType="numeric"
-            autoFocus
-          />
+            <Text style={styles.fieldLabel}>{translations.common.amount}</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={amountInput}
+              onChangeText={setAmountInput}
+              placeholder={translations.common.amount}
+              placeholderTextColor={colors.textSecondary}
+              keyboardType="numeric"
+              autoFocus
+            />
 
-          <View style={styles.modalActions}>
-            <Pressable style={styles.modalCancelButton} onPress={onClose}>
-              <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
-            </Pressable>
-            <Pressable style={styles.modalSaveButton} onPress={handleSave}>
-              <Text style={styles.modalSaveText}>{translations.common.add}</Text>
-            </Pressable>
+            <View style={styles.modalActions}>
+              <Pressable style={styles.modalCancelButton} onPress={onClose}>
+                <Text style={styles.modalCancelText}>{translations.common.cancel}</Text>
+              </Pressable>
+              <Pressable style={styles.modalSaveButton} onPress={handleSave}>
+                <Text style={styles.modalSaveText}>{translations.common.add}</Text>
+              </Pressable>
           </View>
         </Pressable>
       </Pressable>

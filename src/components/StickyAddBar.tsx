@@ -16,8 +16,8 @@ export function StickyAddBar({
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const isTablet = width >= TABLET_BREAKPOINT;
-  const buttonSize = isTablet ? 60 : 48;
-  const iconSize = isTablet ? 26 : 20;
+  const buttonSize = isTablet ? 76 : 64;
+  const iconSize = isTablet ? 34 : 28;
 
   return (
     <View

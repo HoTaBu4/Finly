@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors } from '../theme/colors';
 import { translations } from '../translations';
 import { useResponsive } from '../hooks/useResponsive';
@@ -39,6 +40,7 @@ export function SettingsMenuSheet({
   authUserEmail,
 }: SettingsMenuSheetProps) {
   const { sp } = useResponsive();
+  const insets = useSafeAreaInsets();
   const isLoggedIn = Boolean(authUserEmail);
 
   return (
@@ -50,7 +52,7 @@ export function SettingsMenuSheet({
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable
-          style={[styles.sheet, { paddingHorizontal: sp(16), paddingBottom: sp(28), gap: sp(12) }]}
+          style={[styles.sheet, { paddingHorizontal: sp(16), paddingBottom: insets.bottom, gap: sp(12) }]}
           onPress={(event) => event.stopPropagation()}
         >
           <View style={styles.grabber} />
